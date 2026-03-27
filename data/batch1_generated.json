@@ -1,0 +1,523 @@
+[
+  {
+    "id": "1",
+    "title": "Two Sum",
+    "content": "Given an array of integers `nums` and an integer `target`, return *indices of the two numbers such that they add up to `target`*.\n\nYou may assume that each input would have ***exactly* one solution**, and you may not use the *same* element twice.\n\nYou can return the answer in any order.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [2,7,11,15], target = 9\n**Output:** [0,1]\n**Explanation:** Because nums[0] + nums[1] == 9, we return [0, 1].\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [3,2,4], target = 6\n**Output:** [1,2]\n```\n\n**Example 3:**\n\n```\n**Input:** nums = [3,3], target = 6\n**Output:** [0,1]\n```",
+    "constraints": "**Constraints:**\n\n\t- `2 <= nums.length <= 104`\n\t- `-109 <= nums[i] <= 109`\n\t- `-109 <= target <= 109`\n\t- **Only one valid answer exists.**\n\n \n\n**Follow-up: **Can you come up with an algorithm that is less than `O(n2)` time complexity?",
+    "solution_code": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        d = {}\n        for i, x in enumerate(nums):\n            if (y := target - x) in d:\n                return [d[y], i]\n            d[x] = i\n",
+    "primary_pattern": "Hash Map",
+    "all_patterns": [
+      "Array",
+      "Hash Map"
+    ],
+    "mcq_options": [
+      "Use a Hash Map to store seen values and indices for complement lookup",
+      "Sort then use two pointers and return original indices without extra storage",
+      "Use DFS to search all pairs with pruning",
+      "Use a monotonic stack to match target sum"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "complement",
+      "index map",
+      "one pass"
+    ],
+    "source_dir": "0000-0099/0001.Two Sum"
+  },
+  {
+    "id": "121",
+    "title": "Best Time to Buy and Sell Stock",
+    "content": "You are given an array `prices` where `prices[i]` is the price of a given stock on the `ith` day.\n\nYou want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.\n\nReturn *the maximum profit you can achieve from this transaction*. If you cannot achieve any profit, return `0`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** prices = [7,1,5,3,6,4]\n**Output:** 5\n**Explanation:** Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.\nNote that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.\n```\n\n**Example 2:**\n\n```\n**Input:** prices = [7,6,4,3,1]\n**Output:** 0\n**Explanation:** In this case, no transactions are done and the max profit = 0.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= prices.length <= 105`\n\t- `0 <= prices[i] <= 104`",
+    "solution_code": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        ans, mi = 0, inf\n        for v in prices:\n            ans = max(ans, v - mi)\n            mi = min(mi, v)\n        return ans\n",
+    "primary_pattern": "Running Minimum",
+    "all_patterns": [
+      "Array",
+      "Greedy"
+    ],
+    "mcq_options": [
+      "For Best Time to Buy and Sell Stock, apply Running Minimum to satisfy target complexity",
+      "For Best Time to Buy and Sell Stock, brute-force all candidate combinations",
+      "For Best Time to Buy and Sell Stock, repeatedly sort intermediate states",
+      "For Best Time to Buy and Sell Stock, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "running",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0121.Best Time to Buy and Sell Stock"
+  },
+  {
+    "id": "217",
+    "title": "Contains Duplicate",
+    "content": "Given an integer array `nums`, return `true` if any value appears **at least twice** in the array, and return `false` if every element is distinct.",
+    "examples": "**Example 1:**\n\n**Input:** nums = [1,2,3,1]\n\n**Output:** true\n\n**Explanation:**\n\nThe element 1 occurs at the indices 0 and 3.\n\n**Example 2:**\n\n**Input:** nums = [1,2,3,4]\n\n**Output:** false\n\n**Explanation:**\n\nAll elements are distinct.\n\n**Example 3:**\n\n**Input:** nums = [1,1,1,3,3,4,3,2,4,2]\n\n**Output:** true",
+    "constraints": "**Constraints:**\n\n\t- `1 <= nums.length <= 105`\n\t- `-109 <= nums[i] <= 109`",
+    "solution_code": "class Solution:\n    def containsDuplicate(self, nums: List[int]) -> bool:\n        return any(a == b for a, b in pairwise(sorted(nums)))\n",
+    "primary_pattern": "Hash Set",
+    "all_patterns": [
+      "Array",
+      "Hash Set"
+    ],
+    "mcq_options": [
+      "For Contains Duplicate, apply Hash Set to satisfy target complexity",
+      "For Contains Duplicate, brute-force all candidate combinations",
+      "For Contains Duplicate, repeatedly sort intermediate states",
+      "For Contains Duplicate, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "hash",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0217.Contains Duplicate"
+  },
+  {
+    "id": "53",
+    "title": "Maximum Subarray",
+    "content": "Given an integer array `nums`, find the subarray with the largest sum, and return *its sum*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [-2,1,-3,4,-1,2,1,-5,4]\n**Output:** 6\n**Explanation:** The subarray [4,-1,2,1] has the largest sum 6.\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [1]\n**Output:** 1\n**Explanation:** The subarray [1] has the largest sum 1.\n```\n\n**Example 3:**\n\n```\n**Input:** nums = [5,4,-1,7,8]\n**Output:** 23\n**Explanation:** The subarray [5,4,-1,7,8] has the largest sum 23.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= nums.length <= 105`\n\t- `-104 <= nums[i] <= 104`\n\n \n\n**Follow up:** If you have figured out the `O(n)` solution, try coding another solution using the **divide and conquer** approach, which is more subtle.",
+    "solution_code": "class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        ans = f = nums[0]\n        for x in nums[1:]:\n            f = max(f, 0) + x\n            ans = max(ans, f)\n        return ans\n",
+    "primary_pattern": "Kadane",
+    "all_patterns": [
+      "Array",
+      "Dynamic Programming"
+    ],
+    "mcq_options": [
+      "Use Kadane's algorithm: keep running sum and reset when it drops below zero",
+      "Use BFS to enumerate subarrays by levels",
+      "Sort numbers and sum positive suffix only",
+      "Use binary search over possible sums"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "kadane",
+      "running best",
+      "reset rule"
+    ],
+    "source_dir": "0000-0099/0053.Maximum Subarray"
+  },
+  {
+    "id": "152",
+    "title": "Maximum Product Subarray",
+    "content": "Given an integer array `nums`, find a subarray that has the largest product, and return *the product*.\n\nThe test cases are generated so that the answer will fit in a **32-bit** integer.\n\n**Note** that the product of an array with a single element is the value of that element.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [2,3,-2,4]\n**Output:** 6\n**Explanation:** [2,3] has the largest product 6.\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [-2,0,-1]\n**Output:** 0\n**Explanation:** The result cannot be 2, because [-2,-1] is not a subarray.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= nums.length <= 2 * 104`\n\t- `-10 <= nums[i] <= 10`\n\t- The product of any subarray of `nums` is **guaranteed** to fit in a **32-bit** integer.",
+    "solution_code": "class Solution:\n    def maxProduct(self, nums: List[int]) -> int:\n        ans = f = g = nums[0]\n        for x in nums[1:]:\n            ff, gg = f, g\n            f = max(x, ff * x, gg * x)\n            g = min(x, ff * x, gg * x)\n            ans = max(ans, f)\n        return ans\n",
+    "primary_pattern": "DP with Min/Max Product",
+    "all_patterns": [
+      "Array",
+      "Dynamic Programming"
+    ],
+    "mcq_options": [
+      "For Maximum Product Subarray, define DP state and transition from smaller solved subproblems",
+      "For Maximum Product Subarray, greedily pick local maximum each step",
+      "For Maximum Product Subarray, use union-find to merge states",
+      "For Maximum Product Subarray, simulate all paths without memoization"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "state transition",
+      "base cases",
+      "space optimization"
+    ],
+    "source_dir": "0100-0199/0152.Maximum Product Subarray"
+  },
+  {
+    "id": "238",
+    "title": "Product of Array Except Self",
+    "content": "Given an integer array `nums`, return *an array* `answer` *such that* `answer[i]` *is equal to the product of all the elements of* `nums` *except* `nums[i]`.\n\nThe product of any prefix or suffix of `nums` is **guaranteed** to fit in a **32-bit** integer.\n\nYou must write an algorithm that runs in `O(n)` time and without using the division operation.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [1,2,3,4]\n**Output:** [24,12,8,6]\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [-1,1,0,-3,3]\n**Output:** [0,0,9,0,0]\n```",
+    "constraints": "**Constraints:**\n\n\t- `2 <= nums.length <= 105`\n\t- `-30 <= nums[i] <= 30`\n\t- The input is generated such that `answer[i]` is **guaranteed** to fit in a **32-bit** integer.\n\n \n\n**Follow up:** Can you solve the problem in `O(1)` extra space complexity? (The output array **does not** count as extra space for space complexity analysis.)",
+    "solution_code": "class Solution:\n    def productExceptSelf(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        ans = [0] * n\n        left = right = 1\n        for i, x in enumerate(nums):\n            ans[i] = left\n            left *= x\n        for i in range(n - 1, -1, -1):\n            ans[i] *= right\n            right *= nums[i]\n        return ans\n",
+    "primary_pattern": "Prefix-Suffix Product",
+    "all_patterns": [
+      "Array",
+      "Prefix/Suffix"
+    ],
+    "mcq_options": [
+      "For Product of Array Except Self, apply Prefix-Suffix Product to satisfy target complexity",
+      "For Product of Array Except Self, brute-force all candidate combinations",
+      "For Product of Array Except Self, repeatedly sort intermediate states",
+      "For Product of Array Except Self, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "prefix-suffix",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0238.Product of Array Except Self"
+  },
+  {
+    "id": "3",
+    "title": "Longest Substring Without Repeating Characters",
+    "content": "Given a string `s`, find the length of the **longest** **substring** without duplicate characters.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"abcabcbb\"\n**Output:** 3\n**Explanation:** The answer is \"abc\", with the length of 3. Note that `\"bca\"` and `\"cab\"` are also correct answers.\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"bbbbb\"\n**Output:** 1\n**Explanation:** The answer is \"b\", with the length of 1.\n```\n\n**Example 3:**\n\n```\n**Input:** s = \"pwwkew\"\n**Output:** 3\n**Explanation:** The answer is \"wke\", with the length of 3.\nNotice that the answer must be a substring, \"pwke\" is a subsequence and not a substring.\n```",
+    "constraints": "**Constraints:**\n\n\t- `0 <= s.length <= 5 * 104`\n\t- `s` consists of English letters, digits, symbols and spaces.",
+    "solution_code": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        cnt = Counter()\n        ans = l = 0\n        for r, c in enumerate(s):\n            cnt[c] += 1\n            while cnt[c] > 1:\n                cnt[s[l]] -= 1\n                l += 1\n            ans = max(ans, r - l + 1)\n        return ans\n",
+    "primary_pattern": "Sliding Window",
+    "all_patterns": [
+      "Hash Map",
+      "Sliding Window"
+    ],
+    "mcq_options": [
+      "For Longest Substring Without Repeating Characters, traverse with DFS/BFS and carry exact subtree/depth state",
+      "For Longest Substring Without Repeating Characters, sort node values and rebuild to preserve structure",
+      "For Longest Substring Without Repeating Characters, use two pointers on level array as primary method",
+      "For Longest Substring Without Repeating Characters, apply disjoint-set union on node values"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "subtree state",
+      "traversal order",
+      "null handling"
+    ],
+    "source_dir": "0000-0099/0003.Longest Substring Without Repeating Characters"
+  },
+  {
+    "id": "424",
+    "title": "Longest Repeating Character Replacement",
+    "content": "You are given a string `s` and an integer `k`. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most `k` times.\n\nReturn *the length of the longest substring containing the same letter you can get after performing the above operations*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"ABAB\", k = 2\n**Output:** 4\n**Explanation:** Replace the two 'A's with two 'B's or vice versa.\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"AABABBA\", k = 1\n**Output:** 4\n**Explanation:** Replace the one 'A' in the middle with 'B' and form \"AABBBBA\".\nThe substring \"BBBB\" has the longest repeating letters, which is 4.\nThere may exists other ways to achieve this answer too.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 105`\n\t- `s` consists of only uppercase English letters.\n\t- `0 <= k <= s.length`",
+    "solution_code": "class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        cnt = Counter()\n        l = mx = 0\n        for r, c in enumerate(s):\n            cnt[c] += 1\n            mx = max(mx, cnt[c])\n            if r - l + 1 - mx > k:\n                cnt[s[l]] -= 1\n                l += 1\n        return len(s) - l\n",
+    "primary_pattern": "Sliding Window with Max Freq",
+    "all_patterns": [
+      "Sliding Window",
+      "Hash Map"
+    ],
+    "mcq_options": [
+      "For Longest Repeating Character Replacement, maintain a sliding window with counts and shrink when invalid",
+      "For Longest Repeating Character Replacement, use recursion over all intervals",
+      "For Longest Repeating Character Replacement, use heap ordered by characters",
+      "For Longest Repeating Character Replacement, sort each window from scratch"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "window expand",
+      "window shrink",
+      "frequency map"
+    ],
+    "source_dir": "0400-0499/0424.Longest Repeating Character Replacement"
+  },
+  {
+    "id": "76",
+    "title": "Minimum Window Substring",
+    "content": "Given two strings `s` and `t` of lengths `m` and `n` respectively, return *the **minimum window*** ***substring**** of *`s`* such that every character in *`t`* (**including duplicates**) is included in the window*. If there is no such substring, return *the empty string *`\"\"`.\n\nThe testcases will be generated such that the answer is **unique**.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"ADOBECODEBANC\", t = \"ABC\"\n**Output:** \"BANC\"\n**Explanation:** The minimum window substring \"BANC\" includes 'A', 'B', and 'C' from string t.\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"a\", t = \"a\"\n**Output:** \"a\"\n**Explanation:** The entire string s is the minimum window.\n```\n\n**Example 3:**\n\n```\n**Input:** s = \"a\", t = \"aa\"\n**Output:** \"\"\n**Explanation:** Both 'a's from t must be included in the window.\nSince the largest window of s only has one 'a', return empty string.\n```",
+    "constraints": "**Constraints:**\n\n\t- `m == s.length`\n\t- `n == t.length`\n\t- `1 <= m, n <= 105`\n\t- `s` and `t` consist of uppercase and lowercase English letters.\n\n \n\n**Follow up:** Could you find an algorithm that runs in `O(m + n)` time?",
+    "solution_code": "class Solution:\n    def minWindow(self, s: str, t: str) -> str:\n        need = Counter(t)\n        window = Counter()\n        cnt = l = 0\n        k, mi = -1, inf\n        for r, c in enumerate(s):\n            window[c] += 1\n            if need[c] >= window[c]:\n                cnt += 1\n            while cnt == len(t):\n                if r - l + 1 < mi:\n                    mi = r - l + 1\n                    k = l\n                if need[s[l]] >= window[s[l]]:\n                    cnt -= 1\n                window[s[l]] -= 1\n                l += 1\n        return \"\" if k < 0 else s[k : k + mi]\n",
+    "primary_pattern": "Sliding Window with Needs",
+    "all_patterns": [
+      "Sliding Window",
+      "Hash Map"
+    ],
+    "mcq_options": [
+      "For Minimum Window Substring, traverse with DFS/BFS and carry exact subtree/depth state",
+      "For Minimum Window Substring, sort node values and rebuild to preserve structure",
+      "For Minimum Window Substring, use two pointers on level array as primary method",
+      "For Minimum Window Substring, apply disjoint-set union on node values"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "subtree state",
+      "traversal order",
+      "null handling"
+    ],
+    "source_dir": "0000-0099/0076.Minimum Window Substring"
+  },
+  {
+    "id": "15",
+    "title": "3Sum",
+    "content": "Given an integer array nums, return all the triplets `[nums[i], nums[j], nums[k]]` such that `i != j`, `i != k`, and `j != k`, and `nums[i] + nums[j] + nums[k] == 0`.\n\nNotice that the solution set must not contain duplicate triplets.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [-1,0,1,2,-1,-4]\n**Output:** [[-1,-1,2],[-1,0,1]]\n**Explanation:** \nnums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.\nnums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0.\nnums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0.\nThe distinct triplets are [-1,0,1] and [-1,-1,2].\nNotice that the order of the output and the order of the triplets does not matter.\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [0,1,1]\n**Output:** []\n**Explanation:** The only possible triplet does not sum up to 0.\n```\n\n**Example 3:**\n\n```\n**Input:** nums = [0,0,0]\n**Output:** [[0,0,0]]\n**Explanation:** The only possible triplet sums up to 0.\n```",
+    "constraints": "**Constraints:**\n\n\t- `3 <= nums.length <= 3000`\n\t- `-105 <= nums[i] <= 105`",
+    "solution_code": "class Solution:\n    def threeSum(self, nums: List[int]) -> List[List[int]]:\n        nums.sort()\n        n = len(nums)\n        ans = []\n        for i in range(n - 2):\n            if nums[i] > 0:\n                break\n            if i and nums[i] == nums[i - 1]:\n                continue\n            j, k = i + 1, n - 1\n            while j < k:\n                x = nums[i] + nums[j] + nums[k]\n                if x < 0:\n                    j += 1\n                elif x > 0:\n                    k -= 1\n                else:\n                    ans.append([nums[i], nums[j], nums[k]])\n                    j, k = j + 1, k - 1\n                    while j < k and nums[j] == nums[j - 1]:\n                        j += 1\n                    while j < k and nums[k] == nums[k + 1]:\n                        k -= 1\n        return ans\n",
+    "primary_pattern": "Sort + Two Pointers",
+    "all_patterns": [
+      "Array",
+      "Sorting",
+      "Two Pointers"
+    ],
+    "mcq_options": [
+      "For 3Sum, apply Sort + Two Pointers to satisfy target complexity",
+      "For 3Sum, brute-force all candidate combinations",
+      "For 3Sum, repeatedly sort intermediate states",
+      "For 3Sum, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "sort",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0015.3Sum"
+  },
+  {
+    "id": "11",
+    "title": "Container With Most Water",
+    "content": "You are given an integer array `height` of length `n`. There are `n` vertical lines drawn such that the two endpoints of the `ith` line are `(i, 0)` and `(i, height[i])`.\n\nFind two lines that together with the x-axis form a container, such that the container contains the most water.\n\nReturn *the maximum amount of water a container can store*.\n\n**Notice** that you may not slant the container.",
+    "examples": "**Example 1:**\n\n```\n**Input:** height = [1,8,6,2,5,4,8,3,7]\n**Output:** 49\n**Explanation:** The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7]. In this case, the max area of water (blue section) the container can contain is 49.\n```\n\n**Example 2:**\n\n```\n**Input:** height = [1,1]\n**Output:** 1\n```",
+    "constraints": "**Constraints:**\n\n\t- `n == height.length`\n\t- `2 <= n <= 105`\n\t- `0 <= height[i] <= 104`",
+    "solution_code": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        l, r = 0, len(height) - 1\n        ans = 0\n        while l < r:\n            t = min(height[l], height[r]) * (r - l)\n            ans = max(ans, t)\n            if height[l] < height[r]:\n                l += 1\n            else:\n                r -= 1\n        return ans\n",
+    "primary_pattern": "Two Pointers",
+    "all_patterns": [
+      "Array",
+      "Greedy",
+      "Two Pointers"
+    ],
+    "mcq_options": [
+      "For Container With Most Water, apply Two Pointers to satisfy target complexity",
+      "For Container With Most Water, brute-force all candidate combinations",
+      "For Container With Most Water, repeatedly sort intermediate states",
+      "For Container With Most Water, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "two",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0011.Container With Most Water"
+  },
+  {
+    "id": "206",
+    "title": "Reverse Linked List",
+    "content": "Given the `head` of a singly linked list, reverse the list, and return *the reversed list*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** head = [1,2,3,4,5]\n**Output:** [5,4,3,2,1]\n```\n\n**Example 2:**\n\n```\n**Input:** head = [1,2]\n**Output:** [2,1]\n```\n\n**Example 3:**\n\n```\n**Input:** head = []\n**Output:** []\n```",
+    "constraints": "**Constraints:**\n\n\t- The number of nodes in the list is the range `[0, 5000]`.\n\t- `-5000 <= Node.val <= 5000`\n\n \n\n**Follow up:** A linked list can be reversed either iteratively or recursively. Could you implement both?",
+    "solution_code": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        dummy = ListNode()\n        curr = head\n        while curr:\n            next = curr.next\n            curr.next = dummy.next\n            dummy.next = curr\n            curr = next\n        return dummy.next\n",
+    "primary_pattern": "In-place Linked List Reversal",
+    "all_patterns": [
+      "Linked List"
+    ],
+    "mcq_options": [
+      "For Reverse Linked List, rewire node pointers in-place using prev/curr/next updates",
+      "For Reverse Linked List, convert to array then always sort to simplify pointer logic",
+      "For Reverse Linked List, use BFS queue over node values",
+      "For Reverse Linked List, rely on prefix sums only"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "pointer wiring",
+      "sentinel node",
+      "edge links"
+    ],
+    "source_dir": "0200-0299/0206.Reverse Linked List"
+  },
+  {
+    "id": "21",
+    "title": "Merge Two Sorted Lists",
+    "content": "You are given the heads of two sorted linked lists `list1` and `list2`.\n\nMerge the two lists into one **sorted** list. The list should be made by splicing together the nodes of the first two lists.\n\nReturn *the head of the merged linked list*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** list1 = [1,2,4], list2 = [1,3,4]\n**Output:** [1,1,2,3,4,4]\n```\n\n**Example 2:**\n\n```\n**Input:** list1 = [], list2 = []\n**Output:** []\n```\n\n**Example 3:**\n\n```\n**Input:** list1 = [], list2 = [0]\n**Output:** [0]\n```",
+    "constraints": "**Constraints:**\n\n\t- The number of nodes in both lists is in the range `[0, 50]`.\n\t- `-100 <= Node.val <= 100`\n\t- Both `list1` and `list2` are sorted in **non-decreasing** order.",
+    "solution_code": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def mergeTwoLists(\n        self, list1: Optional[ListNode], list2: Optional[ListNode]\n    ) -> Optional[ListNode]:\n        if list1 is None or list2 is None:\n            return list1 or list2\n        if list1.val <= list2.val:\n            list1.next = self.mergeTwoLists(list1.next, list2)\n            return list1\n        else:\n            list2.next = self.mergeTwoLists(list1, list2.next)\n            return list2\n",
+    "primary_pattern": "Merge Two Sorted Lists",
+    "all_patterns": [
+      "Linked List",
+      "Recursion"
+    ],
+    "mcq_options": [
+      "For Merge Two Sorted Lists, rewire node pointers in-place using prev/curr/next updates",
+      "For Merge Two Sorted Lists, convert to array then always sort to simplify pointer logic",
+      "For Merge Two Sorted Lists, use BFS queue over node values",
+      "For Merge Two Sorted Lists, rely on prefix sums only"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "pointer wiring",
+      "sentinel node",
+      "edge links"
+    ],
+    "source_dir": "0000-0099/0021.Merge Two Sorted Lists"
+  },
+  {
+    "id": "141",
+    "title": "Linked List Cycle",
+    "content": "Given `head`, the head of a linked list, determine if the linked list has a cycle in it.\n\nThere is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the `next` pointer. Internally, `pos` is used to denote the index of the node that tail's `next` pointer is connected to. **Note that `pos` is not passed as a parameter**.\n\nReturn `true`* if there is a cycle in the linked list*. Otherwise, return `false`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** head = [3,2,0,-4], pos = 1\n**Output:** true\n**Explanation:** There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).\n```\n\n**Example 2:**\n\n```\n**Input:** head = [1,2], pos = 0\n**Output:** true\n**Explanation:** There is a cycle in the linked list, where the tail connects to the 0th node.\n```\n\n**Example 3:**\n\n```\n**Input:** head = [1], pos = -1\n**Output:** false\n**Explanation:** There is no cycle in the linked list.\n```",
+    "constraints": "**Constraints:**\n\n\t- The number of the nodes in the list is in the range `[0, 104]`.\n\t- `-105 <= Node.val <= 105`\n\t- `pos` is `-1` or a **valid index** in the linked-list.\n\n \n\n**Follow up:** Can you solve it using `O(1)` (i.e. constant) memory?",
+    "solution_code": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, x):\n#         self.val = x\n#         self.next = None\n\n\nclass Solution:\n    def hasCycle(self, head: Optional[ListNode]) -> bool:\n        s = set()\n        while head:\n            if head in s:\n                return True\n            s.add(head)\n            head = head.next\n        return False\n",
+    "primary_pattern": "Floyd Cycle Detection",
+    "all_patterns": [
+      "Linked List",
+      "Two Pointers"
+    ],
+    "mcq_options": [
+      "For Linked List Cycle, rewire node pointers in-place using prev/curr/next updates",
+      "For Linked List Cycle, convert to array then always sort to simplify pointer logic",
+      "For Linked List Cycle, use BFS queue over node values",
+      "For Linked List Cycle, rely on prefix sums only"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "pointer wiring",
+      "sentinel node",
+      "edge links"
+    ],
+    "source_dir": "0100-0199/0141.Linked List Cycle"
+  },
+  {
+    "id": "19",
+    "title": "Remove Nth Node From End of List",
+    "content": "Given the `head` of a linked list, remove the `nth` node from the end of the list and return its head.",
+    "examples": "**Example 1:**\n\n```\n**Input:** head = [1,2,3,4,5], n = 2\n**Output:** [1,2,3,5]\n```\n\n**Example 2:**\n\n```\n**Input:** head = [1], n = 1\n**Output:** []\n```\n\n**Example 3:**\n\n```\n**Input:** head = [1,2], n = 1\n**Output:** [1]\n```",
+    "constraints": "**Constraints:**\n\n\t- The number of nodes in the list is `sz`.\n\t- `1 <= sz <= 30`\n\t- `0 <= Node.val <= 100`\n\t- `1 <= n <= sz`\n\n \n\n**Follow up:** Could you do this in one pass?",
+    "solution_code": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:\n        dummy = ListNode(next=head)\n        fast = slow = dummy\n        for _ in range(n):\n            fast = fast.next\n        while fast.next:\n            slow, fast = slow.next, fast.next\n        slow.next = slow.next.next\n        return dummy.next\n",
+    "primary_pattern": "Two Pointers with Gap",
+    "all_patterns": [
+      "Linked List",
+      "Two Pointers"
+    ],
+    "mcq_options": [
+      "For Remove Nth Node From End of List, rewire node pointers in-place using prev/curr/next updates",
+      "For Remove Nth Node From End of List, convert to array then always sort to simplify pointer logic",
+      "For Remove Nth Node From End of List, use BFS queue over node values",
+      "For Remove Nth Node From End of List, rely on prefix sums only"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "pointer wiring",
+      "sentinel node",
+      "edge links"
+    ],
+    "source_dir": "0000-0099/0019.Remove Nth Node From End of List"
+  },
+  {
+    "id": "2",
+    "title": "Add Two Numbers",
+    "content": "You are given two **non-empty** linked lists representing two non-negative integers. The digits are stored in **reverse order**, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.\n\nYou may assume the two numbers do not contain any leading zero, except the number 0 itself.",
+    "examples": "**Example 1:**\n\n```\n**Input:** l1 = [2,4,3], l2 = [5,6,4]\n**Output:** [7,0,8]\n**Explanation:** 342 + 465 = 807.\n```\n\n**Example 2:**\n\n```\n**Input:** l1 = [0], l2 = [0]\n**Output:** [0]\n```\n\n**Example 3:**\n\n```\n**Input:** l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]\n**Output:** [8,9,9,9,0,0,0,1]\n```",
+    "constraints": "**Constraints:**\n\n\t- The number of nodes in each linked list is in the range `[1, 100]`.\n\t- `0 <= Node.val <= 9`\n\t- It is guaranteed that the list represents a number that does not have leading zeros.",
+    "solution_code": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def addTwoNumbers(\n        self, l1: Optional[ListNode], l2: Optional[ListNode]\n    ) -> Optional[ListNode]:\n        dummy = ListNode()\n        carry, curr = 0, dummy\n        while l1 or l2 or carry:\n            s = (l1.val if l1 else 0) + (l2.val if l2 else 0) + carry\n            carry, val = divmod(s, 10)\n            curr.next = ListNode(val)\n            curr = curr.next\n            l1 = l1.next if l1 else None\n            l2 = l2.next if l2 else None\n        return dummy.next\n",
+    "primary_pattern": "Digit-wise Linked List Addition",
+    "all_patterns": [
+      "Linked List",
+      "Math"
+    ],
+    "mcq_options": [
+      "For Add Two Numbers, apply Digit-wise Linked List Addition to satisfy target complexity",
+      "For Add Two Numbers, brute-force all candidate combinations",
+      "For Add Two Numbers, repeatedly sort intermediate states",
+      "For Add Two Numbers, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "digit-wise",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0002.Add Two Numbers"
+  },
+  {
+    "id": "143",
+    "title": "Reorder List",
+    "content": "You are given the head of a singly linked-list. The list can be represented as:\n\n```\nL0 → L1 → … → Ln - 1 → Ln\n```\n\n*Reorder the list to be on the following form:*\n\n```\nL0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …\n```\n\nYou may not modify the values in the list's nodes. Only nodes themselves may be changed.",
+    "examples": "**Example 1:**\n\n```\n**Input:** head = [1,2,3,4]\n**Output:** [1,4,2,3]\n```\n\n**Example 2:**\n\n```\n**Input:** head = [1,2,3,4,5]\n**Output:** [1,5,2,4,3]\n```",
+    "constraints": "**Constraints:**\n\n\t- The number of nodes in the list is in the range `[1, 5 * 104]`.\n\t- `1 <= Node.val <= 1000`",
+    "solution_code": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def reorderList(self, head: Optional[ListNode]) -> None:\n        fast = slow = head\n        while fast.next and fast.next.next:\n            slow = slow.next\n            fast = fast.next.next\n\n        cur = slow.next\n        slow.next = None\n\n        pre = None\n        while cur:\n            t = cur.next\n            cur.next = pre\n            pre, cur = cur, t\n        cur = head\n\n        while pre:\n            t = pre.next\n            pre.next = cur.next\n            cur.next = pre\n            cur, pre = pre.next, t\n",
+    "primary_pattern": "Split-Reverse-Merge",
+    "all_patterns": [
+      "Linked List",
+      "Two Pointers"
+    ],
+    "mcq_options": [
+      "For Reorder List, rewire node pointers in-place using prev/curr/next updates",
+      "For Reorder List, convert to array then always sort to simplify pointer logic",
+      "For Reorder List, use BFS queue over node values",
+      "For Reorder List, rely on prefix sums only"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "pointer wiring",
+      "sentinel node",
+      "edge links"
+    ],
+    "source_dir": "0100-0199/0143.Reorder List"
+  },
+  {
+    "id": "20",
+    "title": "Valid Parentheses",
+    "content": "Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.\n\nAn input string is valid if:\n\n\t- Open brackets must be closed by the same type of brackets.\n\t- Open brackets must be closed in the correct order.\n\t- Every close bracket has a corresponding open bracket of the same type.",
+    "examples": "**Example 1:**\n\n**Input:** s = \"()\"\n\n**Output:** true\n\n**Example 2:**\n\n**Input:** s = \"()[]{}\"\n\n**Output:** true\n\n**Example 3:**\n\n**Input:** s = \"(]\"\n\n**Output:** false\n\n**Example 4:**\n\n**Input:** s = \"([])\"\n\n**Output:** true\n\n**Example 5:**\n\n**Input:** s = \"([)]\"\n\n**Output:** false",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 104`\n\t- `s` consists of parentheses only `'()[]{}'`.",
+    "solution_code": "class Solution:\n    def isValid(self, s: str) -> bool:\n        stk = []\n        d = {'()', '[]', '{}'}\n        for c in s:\n            if c in '({[':\n                stk.append(c)\n            elif not stk or stk.pop() + c not in d:\n                return False\n        return not stk\n",
+    "primary_pattern": "Stack Matching",
+    "all_patterns": [
+      "Stack",
+      "String"
+    ],
+    "mcq_options": [
+      "For Valid Parentheses, apply Stack Matching to satisfy target complexity",
+      "For Valid Parentheses, brute-force all candidate combinations",
+      "For Valid Parentheses, repeatedly sort intermediate states",
+      "For Valid Parentheses, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "stack",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0020.Valid Parentheses"
+  },
+  {
+    "id": "125",
+    "title": "Valid Palindrome",
+    "content": "A phrase is a **palindrome** if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.\n\nGiven a string `s`, return `true`* if it is a **palindrome**, or *`false`* otherwise*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"A man, a plan, a canal: Panama\"\n**Output:** true\n**Explanation:** \"amanaplanacanalpanama\" is a palindrome.\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"race a car\"\n**Output:** false\n**Explanation:** \"raceacar\" is not a palindrome.\n```\n\n**Example 3:**\n\n```\n**Input:** s = \" \"\n**Output:** true\n**Explanation:** s is an empty string \"\" after removing non-alphanumeric characters.\nSince an empty string reads the same forward and backward, it is a palindrome.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 2 * 105`\n\t- `s` consists only of printable ASCII characters.",
+    "solution_code": "class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        i, j = 0, len(s) - 1\n        while i < j:\n            if not s[i].isalnum():\n                i += 1\n            elif not s[j].isalnum():\n                j -= 1\n            elif s[i].lower() != s[j].lower():\n                return False\n            else:\n                i, j = i + 1, j - 1\n        return True\n",
+    "primary_pattern": "Two Pointers String Scan",
+    "all_patterns": [
+      "Two Pointers",
+      "String"
+    ],
+    "mcq_options": [
+      "For Valid Palindrome, apply Two Pointers String Scan to satisfy target complexity",
+      "For Valid Palindrome, brute-force all candidate combinations",
+      "For Valid Palindrome, repeatedly sort intermediate states",
+      "For Valid Palindrome, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "two",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0125.Valid Palindrome"
+  },
+  {
+    "id": "242",
+    "title": "Valid Anagram",
+    "content": "Given two strings `s` and `t`, return `true` if `t` is an anagram of `s`, and `false` otherwise.",
+    "examples": "**Example 1:**\n\n**Input:** s = \"anagram\", t = \"nagaram\"\n\n**Output:** true\n\n**Example 2:**\n\n**Input:** s = \"rat\", t = \"car\"\n\n**Output:** false",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length, t.length <= 5 * 104`\n\t- `s` and `t` consist of lowercase English letters.\n\n \n\n**Follow up:** What if the inputs contain Unicode characters? How would you adapt your solution to such a case?",
+    "solution_code": "class Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        if len(s) != len(t):\n            return False\n        cnt = Counter(s)\n        for c in t:\n            cnt[c] -= 1\n            if cnt[c] < 0:\n                return False\n        return True\n",
+    "primary_pattern": "Character Frequency Count",
+    "all_patterns": [
+      "Hash Map",
+      "String"
+    ],
+    "mcq_options": [
+      "For Valid Anagram, apply Character Frequency Count to satisfy target complexity",
+      "For Valid Anagram, brute-force all candidate combinations",
+      "For Valid Anagram, repeatedly sort intermediate states",
+      "For Valid Anagram, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "character",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0242.Valid Anagram"
+  }
+]

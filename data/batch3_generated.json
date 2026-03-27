@@ -1,0 +1,1256 @@
+[
+  {
+    "id": "57",
+    "title": "Insert Interval",
+    "content": "You are given an array of non-overlapping intervals `intervals` where `intervals[i] = [starti, endi]` represent the start and the end of the `ith` interval and `intervals` is sorted in ascending order by `starti`. You are also given an interval `newInterval = [start, end]` that represents the start and end of another interval.\n\nInsert `newInterval` into `intervals` such that `intervals` is still sorted in ascending order by `starti` and `intervals` still does not have any overlapping intervals (merge overlapping intervals if necessary).\n\nReturn `intervals`* after the insertion*.\n\n**Note** that you don't need to modify `intervals` in-place. You can make a new array and return it.",
+    "examples": "**Example 1:**\n\n```\n**Input:** intervals = [[1,3],[6,9]], newInterval = [2,5]\n**Output:** [[1,5],[6,9]]\n```\n\n**Example 2:**\n\n```\n**Input:** intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]\n**Output:** [[1,2],[3,10],[12,16]]\n**Explanation:** Because the new interval [4,8] overlaps with [3,5],[6,7],[8,10].\n```",
+    "constraints": "**Constraints:**\n\n\t- `0 <= intervals.length <= 104`\n\t- `intervals[i].length == 2`\n\t- `0 <= starti <= endi <= 105`\n\t- `intervals` is sorted by `starti` in **ascending** order.\n\t- `newInterval.length == 2`\n\t- `0 <= start <= end <= 105`",
+    "solution_code": "class Solution:\n    def insert(\n        self, intervals: List[List[int]], newInterval: List[int]\n    ) -> List[List[int]]:\n        def merge(intervals: List[List[int]]) -> List[List[int]]:\n            intervals.sort()\n            ans = [intervals[0]]\n            for s, e in intervals[1:]:\n                if ans[-1][1] < s:\n                    ans.append([s, e])\n                else:\n                    ans[-1][1] = max(ans[-1][1], e)\n            return ans\n\n        intervals.append(newInterval)\n        return merge(intervals)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Insert Interval, apply General to satisfy target complexity",
+      "For Insert Interval, brute-force all candidate combinations",
+      "For Insert Interval, repeatedly sort intermediate states",
+      "For Insert Interval, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0057.Insert Interval"
+  },
+  {
+    "id": "56",
+    "title": "Merge Intervals",
+    "content": "Given an array of `intervals` where `intervals[i] = [starti, endi]`, merge all overlapping intervals, and return *an array of the non-overlapping intervals that cover all the intervals in the input*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** intervals = [[1,3],[2,6],[8,10],[15,18]]\n**Output:** [[1,6],[8,10],[15,18]]\n**Explanation:** Since intervals [1,3] and [2,6] overlap, merge them into [1,6].\n```\n\n**Example 2:**\n\n```\n**Input:** intervals = [[1,4],[4,5]]\n**Output:** [[1,5]]\n**Explanation:** Intervals [1,4] and [4,5] are considered overlapping.\n```\n\n**Example 3:**\n\n```\n**Input:** intervals = [[4,7],[1,4]]\n**Output:** [[1,7]]\n**Explanation:** Intervals [1,4] and [4,7] are considered overlapping.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= intervals.length <= 104`\n\t- `intervals[i].length == 2`\n\t- `0 <= starti <= endi <= 104`",
+    "solution_code": "class Solution:\n    def merge(self, intervals: List[List[int]]) -> List[List[int]]:\n        intervals.sort()\n        ans = []\n        st, ed = intervals[0]\n        for s, e in intervals[1:]:\n            if ed < s:\n                ans.append([st, ed])\n                st, ed = s, e\n            else:\n                ed = max(ed, e)\n        ans.append([st, ed])\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Merge Intervals, apply General to satisfy target complexity",
+      "For Merge Intervals, brute-force all candidate combinations",
+      "For Merge Intervals, repeatedly sort intermediate states",
+      "For Merge Intervals, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0056.Merge Intervals"
+  },
+  {
+    "id": "435",
+    "title": "Non-overlapping Intervals",
+    "content": "Given an array of intervals `intervals` where `intervals[i] = [starti, endi]`, return *the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping*.\n\n**Note** that intervals which only touch at a point are **non-overlapping**. For example, `[1, 2]` and `[2, 3]` are non-overlapping.",
+    "examples": "**Example 1:**\n\n```\n**Input:** intervals = [[1,2],[2,3],[3,4],[1,3]]\n**Output:** 1\n**Explanation:** [1,3] can be removed and the rest of the intervals are non-overlapping.\n```\n\n**Example 2:**\n\n```\n**Input:** intervals = [[1,2],[1,2],[1,2]]\n**Output:** 2\n**Explanation:** You need to remove two [1,2] to make the rest of the intervals non-overlapping.\n```\n\n**Example 3:**\n\n```\n**Input:** intervals = [[1,2],[2,3]]\n**Output:** 0\n**Explanation:** You don't need to remove any of the intervals since they're already non-overlapping.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= intervals.length <= 105`\n\t- `intervals[i].length == 2`\n\t- `-5 * 104 <= starti < endi <= 5 * 104`",
+    "solution_code": "class Solution:\n    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n        intervals.sort(key=lambda x: x[1])\n        ans = len(intervals)\n        pre = -inf\n        for l, r in intervals:\n            if pre <= l:\n                ans -= 1\n                pre = r\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Non-overlapping Intervals, apply General to satisfy target complexity",
+      "For Non-overlapping Intervals, brute-force all candidate combinations",
+      "For Non-overlapping Intervals, repeatedly sort intermediate states",
+      "For Non-overlapping Intervals, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0400-0499/0435.Non-overlapping Intervals"
+  },
+  {
+    "id": "739",
+    "title": "Daily Temperatures",
+    "content": "Given an array of integers `temperatures` represents the daily temperatures, return *an array* `answer` *such that* `answer[i]` *is the number of days you have to wait after the* `ith` *day to get a warmer temperature*. If there is no future day for which this is possible, keep `answer[i] == 0` instead.",
+    "examples": "**Example 1:**\n\n```\n**Input:** temperatures = [73,74,75,71,69,72,76,73]\n**Output:** [1,1,4,2,1,1,0,0]\n```\n\n**Example 2:**\n\n```\n**Input:** temperatures = [30,40,50,60]\n**Output:** [1,1,1,0]\n```\n\n**Example 3:**\n\n```\n**Input:** temperatures = [30,60,90]\n**Output:** [1,1,0]\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= temperatures.length <= 105`\n\t- `30 <= temperatures[i] <= 100`",
+    "solution_code": "class Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        stk = []\n        n = len(temperatures)\n        ans = [0] * n\n        for i in range(n - 1, -1, -1):\n            while stk and temperatures[stk[-1]] <= temperatures[i]:\n                stk.pop()\n            if stk:\n                ans[i] = stk[-1] - i\n            stk.append(i)\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Daily Temperatures, apply General to satisfy target complexity",
+      "For Daily Temperatures, brute-force all candidate combinations",
+      "For Daily Temperatures, repeatedly sort intermediate states",
+      "For Daily Temperatures, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0700-0799/0739.Daily Temperatures"
+  },
+  {
+    "id": "853",
+    "title": "Car Fleet",
+    "content": "There are `n` cars at given miles away from the starting mile 0, traveling to reach the mile `target`.\n\nYou are given two integer arrays `position` and `speed`, both of length `n`, where `position[i]` is the starting mile of the `ith` car and `speed[i]` is the speed of the `ith` car in miles per hour.\n\nA car cannot pass another car, but it can catch up and then travel next to it at the speed of the slower car.\n\nA **car fleet** is a single car or a group of cars driving next to each other. The speed of the car fleet is the **minimum** speed of any car in the fleet.\n\nIf a car catches up to a car fleet at the mile `target`, it will still be considered as part of the car fleet.\n\nReturn the number of car fleets that will arrive at the destination.",
+    "examples": "**Example 1:**\n\n**Input:** target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]\n\n**Output:** 3\n\n**Explanation:**\n\n\t- The cars starting at 10 (speed 2) and 8 (speed 4) become a fleet, meeting each other at 12. The fleet forms at `target`.\n\t- The car starting at 0 (speed 1) does not catch up to any other car, so it is a fleet by itself.\n\t- The cars starting at 5 (speed 1) and 3 (speed 3) become a fleet, meeting each other at 6. The fleet moves at speed 1 until it reaches `target`.\n\n**Example 2:**\n\n**Input:** target = 10, position = [3], speed = [3]\n\n**Output:** 1\n\n**Explanation:**\n\nThere is only one car, hence there is only one fleet.\n\n**Example 3:**\n\n**Input:** target = 100, position = [0,2,4], speed = [4,2,1]\n\n**Output:** 1\n\n**Explanation:**\n\n\t- The cars starting at 0 (speed 4) and 2 (speed 2) become a fleet, meeting each other at 4. The car starting at 4 (speed 1) travels to 5.\n\t- Then, the fleet at 4 (speed 2) and the car at position 5 (speed 1) become one fleet, meeting each other at 6. The fleet moves at speed 1 until it reaches `target`.",
+    "constraints": "**Constraints:**\n\n\t- `n == position.length == speed.length`\n\t- `1 <= n <= 105`\n\t- `0 < target <= 106`\n\t- `0 <= position[i] < target`\n\t- All the values of `position` are **unique**.\n\t- `0 < speed[i] <= 106`",
+    "solution_code": "class Solution:\n    def carFleet(self, target: int, position: List[int], speed: List[int]) -> int:\n        idx = sorted(range(len(position)), key=lambda i: position[i])\n        ans = pre = 0\n        for i in idx[::-1]:\n            t = (target - position[i]) / speed[i]\n            if t > pre:\n                ans += 1\n                pre = t\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Car Fleet, apply General to satisfy target complexity",
+      "For Car Fleet, brute-force all candidate combinations",
+      "For Car Fleet, repeatedly sort intermediate states",
+      "For Car Fleet, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0800-0899/0853.Car Fleet"
+  },
+  {
+    "id": "295",
+    "title": "Find Median from Data Stream",
+    "content": "The **median** is the middle value in an ordered integer list. If the size of the list is even, there is no middle value, and the median is the mean of the two middle values.\n\n\t- For example, for `arr = [2,3,4]`, the median is `3`.\n\t- For example, for `arr = [2,3]`, the median is `(2 + 3) / 2 = 2.5`.\n\nImplement the MedianFinder class:\n\n\t- `MedianFinder()` initializes the `MedianFinder` object.\n\t- `void addNum(int num)` adds the integer `num` from the data stream to the data structure.\n\t- `double findMedian()` returns the median of all elements so far. Answers within `10-5` of the actual answer will be accepted.",
+    "examples": "**Example 1:**\n\n```\n**Input**\n[\"MedianFinder\", \"addNum\", \"addNum\", \"findMedian\", \"addNum\", \"findMedian\"]\n[[], [1], [2], [], [3], []]\n**Output**\n[null, null, null, 1.5, null, 2.0]\n\n**Explanation**\nMedianFinder medianFinder = new MedianFinder();\nmedianFinder.addNum(1);    // arr = [1]\nmedianFinder.addNum(2);    // arr = [1, 2]\nmedianFinder.findMedian(); // return 1.5 (i.e., (1 + 2) / 2)\nmedianFinder.addNum(3);    // arr[1, 2, 3]\nmedianFinder.findMedian(); // return 2.0\n```",
+    "constraints": "**Constraints:**\n\n\t- `-105 <= num <= 105`\n\t- There will be at least one element in the data structure before calling `findMedian`.\n\t- At most `5 * 104` calls will be made to `addNum` and `findMedian`.\n\n \n\n**Follow up:**\n\n\t- If all integer numbers from the stream are in the range `[0, 100]`, how would you optimize your solution?\n\t- If `99%` of all integer numbers from the stream are in the range `[0, 100]`, how would you optimize your solution?",
+    "solution_code": "class MedianFinder:\n\n    def __init__(self):\n        self.minq = []\n        self.maxq = []\n\n    def addNum(self, num: int) -> None:\n        heappush(self.minq, -heappushpop(self.maxq, -num))\n        if len(self.minq) - len(self.maxq) > 1:\n            heappush(self.maxq, -heappop(self.minq))\n\n    def findMedian(self) -> float:\n        if len(self.minq) == len(self.maxq):\n            return (self.minq[0] - self.maxq[0]) / 2\n        return self.minq[0]\n\n\n# Your MedianFinder object will be instantiated and called as such:\n# obj = MedianFinder()\n# obj.addNum(num)\n# param_2 = obj.findMedian()\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Find Median from Data Stream, apply General to satisfy target complexity",
+      "For Find Median from Data Stream, brute-force all candidate combinations",
+      "For Find Median from Data Stream, repeatedly sort intermediate states",
+      "For Find Median from Data Stream, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0295.Find Median from Data Stream"
+  },
+  {
+    "id": "703",
+    "title": "Kth Largest Element in a Stream",
+    "content": "You are part of a university admissions office and need to keep track of the `kth` highest test score from applicants in real-time. This helps to determine cut-off marks for interviews and admissions dynamically as new applicants submit their scores.\n\nYou are tasked to implement a class which, for a given integer `k`, maintains a stream of test scores and continuously returns the `k`th highest test score **after** a new score has been submitted. More specifically, we are looking for the `k`th highest score in the sorted list of all scores.\n\nImplement the `KthLargest` class:\n\n\t- `KthLargest(int k, int[] nums)` Initializes the object with the integer `k` and the stream of test scores `nums`.\n\t- `int add(int val)` Adds a new test score `val` to the stream and returns the element representing the `kth` largest element in the pool of test scores so far.",
+    "examples": "**Example 1:**\n\n**Input:**\n\n[\"KthLargest\", \"add\", \"add\", \"add\", \"add\", \"add\"]\n\n[[3, [4, 5, 8, 2]], [3], [5], [10], [9], [4]]\n\n**Output:** [null, 4, 5, 5, 8, 8]\n\n**Explanation:**\n\nKthLargest kthLargest = new KthLargest(3, [4, 5, 8, 2]);\n\nkthLargest.add(3); // return 4\n\nkthLargest.add(5); // return 5\n\nkthLargest.add(10); // return 5\n\nkthLargest.add(9); // return 8\n\nkthLargest.add(4); // return 8\n\n**Example 2:**\n\n**Input:**\n\n[\"KthLargest\", \"add\", \"add\", \"add\", \"add\"]\n\n[[4, [7, 7, 7, 7, 8, 3]], [2], [10], [9], [9]]\n\n**Output:** [null, 7, 7, 7, 8]\n\n**Explanation:**\n\nKthLargest kthLargest = new KthLargest(4, [7, 7, 7, 7, 8, 3]);\n\nkthLargest.add(2); // return 7\n\nkthLargest.add(10); // return 7\n\nkthLargest.add(9); // return 7\n\nkthLargest.add(9); // return 8",
+    "constraints": "**Constraints:**\n\n\t- `0 <= nums.length <= 104`\n\t- `1 <= k <= nums.length + 1`\n\t- `-104 <= nums[i] <= 104`\n\t- `-104 <= val <= 104`\n\t- At most `104` calls will be made to `add`.",
+    "solution_code": "class KthLargest:\n\n    def __init__(self, k: int, nums: List[int]):\n        self.k = k\n        self.min_q = []\n        for x in nums:\n            self.add(x)\n\n    def add(self, val: int) -> int:\n        heappush(self.min_q, val)\n        if len(self.min_q) > self.k:\n            heappop(self.min_q)\n        return self.min_q[0]\n\n\n# Your KthLargest object will be instantiated and called as such:\n# obj = KthLargest(k, nums)\n# param_1 = obj.add(val)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Kth Largest Element in a Stream, apply General to satisfy target complexity",
+      "For Kth Largest Element in a Stream, brute-force all candidate combinations",
+      "For Kth Largest Element in a Stream, repeatedly sort intermediate states",
+      "For Kth Largest Element in a Stream, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0700-0799/0703.Kth Largest Element in a Stream"
+  },
+  {
+    "id": "215",
+    "title": "Kth Largest Element in an Array",
+    "content": "Given an integer array `nums` and an integer `k`, return *the* `kth` *largest element in the array*.\n\nNote that it is the `kth` largest element in the sorted order, not the `kth` distinct element.\n\nCan you solve it without sorting?",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [3,2,1,5,6,4], k = 2\n**Output:** 5\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [3,2,3,1,2,4,5,5,6], k = 4\n**Output:** 4\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= k <= nums.length <= 105`\n\t- `-104 <= nums[i] <= 104`",
+    "solution_code": "class Solution:\n    def findKthLargest(self, nums: List[int], k: int) -> int:\n        def quick_sort(l: int, r: int) -> int:\n            if l == r:\n                return nums[l]\n            i, j = l - 1, r + 1\n            x = nums[(l + r) >> 1]\n            while i < j:\n                while 1:\n                    i += 1\n                    if nums[i] >= x:\n                        break\n                while 1:\n                    j -= 1\n                    if nums[j] <= x:\n                        break\n                if i < j:\n                    nums[i], nums[j] = nums[j], nums[i]\n            if j < k:\n                return quick_sort(j + 1, r)\n            return quick_sort(l, j)\n\n        n = len(nums)\n        k = n - k\n        return quick_sort(0, n - 1)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Kth Largest Element in an Array, apply General to satisfy target complexity",
+      "For Kth Largest Element in an Array, brute-force all candidate combinations",
+      "For Kth Largest Element in an Array, repeatedly sort intermediate states",
+      "For Kth Largest Element in an Array, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0215.Kth Largest Element in an Array"
+  },
+  {
+    "id": "981",
+    "title": "Time Based Key-Value Store",
+    "content": "Design a time-based key-value data structure that can store multiple values for the same key at different time stamps and retrieve the key's value at a certain timestamp.\n\nImplement the `TimeMap` class:\n\n\t- `TimeMap()` Initializes the object of the data structure.\n\t- `void set(String key, String value, int timestamp)` Stores the key `key` with the value `value` at the given time `timestamp`.\n\t- `String get(String key, int timestamp)` Returns a value such that `set` was called previously, with `timestamp_prev <= timestamp`. If there are multiple such values, it returns the value associated with the largest `timestamp_prev`. If there are no values, it returns `\"\"`.",
+    "examples": "**Example 1:**\n\n```\n**Input**\n[\"TimeMap\", \"set\", \"get\", \"get\", \"set\", \"get\", \"get\"]\n[[], [\"foo\", \"bar\", 1], [\"foo\", 1], [\"foo\", 3], [\"foo\", \"bar2\", 4], [\"foo\", 4], [\"foo\", 5]]\n**Output**\n[null, null, \"bar\", \"bar\", null, \"bar2\", \"bar2\"]\n\n**Explanation**\nTimeMap timeMap = new TimeMap();\ntimeMap.set(\"foo\", \"bar\", 1);  // store the key \"foo\" and value \"bar\" along with timestamp = 1.\ntimeMap.get(\"foo\", 1);         // return \"bar\"\ntimeMap.get(\"foo\", 3);         // return \"bar\", since there is no value corresponding to foo at timestamp 3 and timestamp 2, then the only value is at timestamp 1 is \"bar\".\ntimeMap.set(\"foo\", \"bar2\", 4); // store the key \"foo\" and value \"bar2\" along with timestamp = 4.\ntimeMap.get(\"foo\", 4);         // return \"bar2\"\ntimeMap.get(\"foo\", 5);         // return \"bar2\"\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= key.length, value.length <= 100`\n\t- `key` and `value` consist of lowercase English letters and digits.\n\t- `1 <= timestamp <= 107`\n\t- All the timestamps `timestamp` of `set` are strictly increasing.\n\t- At most `2 * 105` calls will be made to `set` and `get`.",
+    "solution_code": "class TimeMap:\n    def __init__(self):\n        self.ktv = defaultdict(list)\n\n    def set(self, key: str, value: str, timestamp: int) -> None:\n        self.ktv[key].append((timestamp, value))\n\n    def get(self, key: str, timestamp: int) -> str:\n        if key not in self.ktv:\n            return ''\n        tv = self.ktv[key]\n        i = bisect_right(tv, (timestamp, chr(127)))\n        return tv[i - 1][1] if i else ''\n\n\n# Your TimeMap object will be instantiated and called as such:\n# obj = TimeMap()\n# obj.set(key,value,timestamp)\n# param_2 = obj.get(key,timestamp)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Time Based Key-Value Store, apply General to satisfy target complexity",
+      "For Time Based Key-Value Store, brute-force all candidate combinations",
+      "For Time Based Key-Value Store, repeatedly sort intermediate states",
+      "For Time Based Key-Value Store, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0900-0999/0981.Time Based Key-Value Store"
+  },
+  {
+    "id": "146",
+    "title": "LRU Cache",
+    "content": "Design a data structure that follows the constraints of a **Least Recently Used (LRU) cache**.\n\nImplement the `LRUCache` class:\n\n\t- `LRUCache(int capacity)` Initialize the LRU cache with **positive** size `capacity`.\n\t- `int get(int key)` Return the value of the `key` if the key exists, otherwise return `-1`.\n\t- `void put(int key, int value)` Update the value of the `key` if the `key` exists. Otherwise, add the `key-value` pair to the cache. If the number of keys exceeds the `capacity` from this operation, **evict** the least recently used key.\n\nThe functions `get` and `put` must each run in `O(1)` average time complexity.",
+    "examples": "**Example 1:**\n\n```\n**Input**\n[\"LRUCache\", \"put\", \"put\", \"get\", \"put\", \"get\", \"put\", \"get\", \"get\", \"get\"]\n[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]\n**Output**\n[null, null, null, 1, null, -1, null, -1, 3, 4]\n\n**Explanation**\nLRUCache lRUCache = new LRUCache(2);\nlRUCache.put(1, 1); // cache is {1=1}\nlRUCache.put(2, 2); // cache is {1=1, 2=2}\nlRUCache.get(1);    // return 1\nlRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}\nlRUCache.get(2);    // returns -1 (not found)\nlRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}\nlRUCache.get(1);    // return -1 (not found)\nlRUCache.get(3);    // return 3\nlRUCache.get(4);    // return 4\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= capacity <= 3000`\n\t- `0 <= key <= 104`\n\t- `0 <= value <= 105`\n\t- At most `2 * 105` calls will be made to `get` and `put`.",
+    "solution_code": "class Node:\n    def __init__(self, key: int = 0, val: int = 0):\n        self.key = key\n        self.val = val\n        self.prev = None\n        self.next = None\n\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        self.size = 0\n        self.capacity = capacity\n        self.cache = {}\n        self.head = Node()\n        self.tail = Node()\n        self.head.next = self.tail\n        self.tail.prev = self.head\n\n    def get(self, key: int) -> int:\n        if key not in self.cache:\n            return -1\n        node = self.cache[key]\n        self.remove_node(node)\n        self.add_to_head(node)\n        return node.val\n\n    def put(self, key: int, value: int) -> None:\n        if key in self.cache:\n            node = self.cache[key]\n            self.remove_node(node)\n            node.val = value\n            self.add_to_head(node)\n        else:\n            node = Node(key, value)\n            self.cache[key] = node\n            self.add_to_head(node)\n            self.size += 1\n            if self.size > self.capacity:\n                node = self.tail.prev\n                self.cache.pop(node.key)\n                self.remove_node(node)\n                self.size -= 1\n\n    def remove_node(self, node):\n        node.prev.next = node.next\n        node.next.prev = node.prev\n\n    def add_to_head(self, node):\n        node.next = self.head.next\n        node.prev = self.head\n        self.head.next = node\n        node.next.prev = node\n\n\n# Your LRUCache object will be instantiated and called as such:\n# obj = LRUCache(capacity)\n# param_1 = obj.get(key)\n# obj.put(key,value)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For LRU Cache, apply General to satisfy target complexity",
+      "For LRU Cache, brute-force all candidate combinations",
+      "For LRU Cache, repeatedly sort intermediate states",
+      "For LRU Cache, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0146.LRU Cache"
+  },
+  {
+    "id": "208",
+    "title": "Implement Trie (Prefix Tree)",
+    "content": "A **trie** (pronounced as \"try\") or **prefix tree** is a tree data structure used to efficiently store and retrieve keys in a dataset of strings. There are various applications of this data structure, such as autocomplete and spellchecker.\n\nImplement the Trie class:\n\n\t- `Trie()` Initializes the trie object.\n\t- `void insert(String word)` Inserts the string `word` into the trie.\n\t- `boolean search(String word)` Returns `true` if the string `word` is in the trie (i.e., was inserted before), and `false` otherwise.\n\t- `boolean startsWith(String prefix)` Returns `true` if there is a previously inserted string `word` that has the prefix `prefix`, and `false` otherwise.",
+    "examples": "**Example 1:**\n\n```\n**Input**\n[\"Trie\", \"insert\", \"search\", \"search\", \"startsWith\", \"insert\", \"search\"]\n[[], [\"apple\"], [\"apple\"], [\"app\"], [\"app\"], [\"app\"], [\"app\"]]\n**Output**\n[null, null, true, false, true, null, true]\n\n**Explanation**\nTrie trie = new Trie();\ntrie.insert(\"apple\");\ntrie.search(\"apple\");   // return True\ntrie.search(\"app\");     // return False\ntrie.startsWith(\"app\"); // return True\ntrie.insert(\"app\");\ntrie.search(\"app\");     // return True\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= word.length, prefix.length <= 2000`\n\t- `word` and `prefix` consist only of lowercase English letters.\n\t- At most `3 * 104` calls **in total** will be made to `insert`, `search`, and `startsWith`.",
+    "solution_code": "class Trie:\n    def __init__(self):\n        self.children = [None] * 26\n        self.is_end = False\n\n    def insert(self, word: str) -> None:\n        node = self\n        for c in word:\n            idx = ord(c) - ord('a')\n            if node.children[idx] is None:\n                node.children[idx] = Trie()\n            node = node.children[idx]\n        node.is_end = True\n\n    def search(self, word: str) -> bool:\n        node = self._search_prefix(word)\n        return node is not None and node.is_end\n\n    def startsWith(self, prefix: str) -> bool:\n        node = self._search_prefix(prefix)\n        return node is not None\n\n    def _search_prefix(self, prefix: str):\n        node = self\n        for c in prefix:\n            idx = ord(c) - ord('a')\n            if node.children[idx] is None:\n                return None\n            node = node.children[idx]\n        return node\n\n\n# Your Trie object will be instantiated and called as such:\n# obj = Trie()\n# obj.insert(word)\n# param_2 = obj.search(word)\n# param_3 = obj.startsWith(prefix)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Implement Trie (Prefix Tree), traverse with DFS/BFS and carry exact subtree/depth state",
+      "For Implement Trie (Prefix Tree), sort node values and rebuild to preserve structure",
+      "For Implement Trie (Prefix Tree), use two pointers on level array as primary method",
+      "For Implement Trie (Prefix Tree), apply disjoint-set union on node values"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "subtree state",
+      "traversal order",
+      "null handling"
+    ],
+    "source_dir": "0200-0299/0208.Implement Trie (Prefix Tree)"
+  },
+  {
+    "id": "211",
+    "title": "Design Add and Search Words Data Structure",
+    "content": "Design a data structure that supports adding new words and finding if a string matches any previously added string.\n\nImplement the `WordDictionary` class:\n\n\t- `WordDictionary()` Initializes the object.\n\t- `void addWord(word)` Adds `word` to the data structure, it can be matched later.\n\t- `bool search(word)` Returns `true` if there is any string in the data structure that matches `word` or `false` otherwise. `word` may contain dots `'.'` where dots can be matched with any letter.",
+    "examples": "**Example:**\n\n```\n**Input**\n[\"WordDictionary\",\"addWord\",\"addWord\",\"addWord\",\"search\",\"search\",\"search\",\"search\"]\n[[],[\"bad\"],[\"dad\"],[\"mad\"],[\"pad\"],[\"bad\"],[\".ad\"],[\"b..\"]]\n**Output**\n[null,null,null,null,false,true,true,true]\n\n**Explanation**\nWordDictionary wordDictionary = new WordDictionary();\nwordDictionary.addWord(\"bad\");\nwordDictionary.addWord(\"dad\");\nwordDictionary.addWord(\"mad\");\nwordDictionary.search(\"pad\"); // return False\nwordDictionary.search(\"bad\"); // return True\nwordDictionary.search(\".ad\"); // return True\nwordDictionary.search(\"b..\"); // return True\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= word.length <= 25`\n\t- `word` in `addWord` consists of lowercase English letters.\n\t- `word` in `search` consist of `'.'` or lowercase English letters.\n\t- There will be at most `2` dots in `word` for `search` queries.\n\t- At most `104` calls will be made to `addWord` and `search`.",
+    "solution_code": "class Trie:\n    def __init__(self):\n        self.children = [None] * 26\n        self.is_end = False\n\n\nclass WordDictionary:\n    def __init__(self):\n        self.trie = Trie()\n\n    def addWord(self, word: str) -> None:\n        node = self.trie\n        for c in word:\n            idx = ord(c) - ord('a')\n            if node.children[idx] is None:\n                node.children[idx] = Trie()\n            node = node.children[idx]\n        node.is_end = True\n\n    def search(self, word: str) -> bool:\n        def search(word, node):\n            for i in range(len(word)):\n                c = word[i]\n                idx = ord(c) - ord('a')\n                if c != '.' and node.children[idx] is None:\n                    return False\n                if c == '.':\n                    for child in node.children:\n                        if child is not None and search(word[i + 1 :], child):\n                            return True\n                    return False\n                node = node.children[idx]\n            return node.is_end\n\n        return search(word, self.trie)\n\n\n# Your WordDictionary object will be instantiated and called as such:\n# obj = WordDictionary()\n# obj.addWord(word)\n# param_2 = obj.search(word)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Design Add and Search Words Data Structure, apply General to satisfy target complexity",
+      "For Design Add and Search Words Data Structure, brute-force all candidate combinations",
+      "For Design Add and Search Words Data Structure, repeatedly sort intermediate states",
+      "For Design Add and Search Words Data Structure, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0211.Design Add and Search Words Data Structure"
+  },
+  {
+    "id": "212",
+    "title": "Word Search II",
+    "content": "Given an `m x n` `board` of characters and a list of strings `words`, return *all words on the board*.\n\nEach word must be constructed from letters of sequentially adjacent cells, where **adjacent cells** are horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.",
+    "examples": "**Example 1:**\n\n```\n**Input:** board = [[\"o\",\"a\",\"a\",\"n\"],[\"e\",\"t\",\"a\",\"e\"],[\"i\",\"h\",\"k\",\"r\"],[\"i\",\"f\",\"l\",\"v\"]], words = [\"oath\",\"pea\",\"eat\",\"rain\"]\n**Output:** [\"eat\",\"oath\"]\n```\n\n**Example 2:**\n\n```\n**Input:** board = [[\"a\",\"b\"],[\"c\",\"d\"]], words = [\"abcb\"]\n**Output:** []\n```",
+    "constraints": "**Constraints:**\n\n\t- `m == board.length`\n\t- `n == board[i].length`\n\t- `1 <= m, n <= 12`\n\t- `board[i][j]` is a lowercase English letter.\n\t- `1 <= words.length <= 3 * 104`\n\t- `1 <= words[i].length <= 10`\n\t- `words[i]` consists of lowercase English letters.\n\t- All the strings of `words` are unique.",
+    "solution_code": "class Trie:\n    def __init__(self):\n        self.children: List[Trie | None] = [None] * 26\n        self.ref: int = -1\n\n    def insert(self, w: str, ref: int):\n        node = self\n        for c in w:\n            idx = ord(c) - ord('a')\n            if node.children[idx] is None:\n                node.children[idx] = Trie()\n            node = node.children[idx]\n        node.ref = ref\n\n\nclass Solution:\n    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:\n        def dfs(node: Trie, i: int, j: int):\n            idx = ord(board[i][j]) - ord('a')\n            if node.children[idx] is None:\n                return\n            node = node.children[idx]\n            if node.ref >= 0:\n                ans.append(words[node.ref])\n                node.ref = -1\n            c = board[i][j]\n            board[i][j] = '#'\n            for a, b in pairwise((-1, 0, 1, 0, -1)):\n                x, y = i + a, j + b\n                if 0 <= x < m and 0 <= y < n and board[x][y] != '#':\n                    dfs(node, x, y)\n            board[i][j] = c\n\n        tree = Trie()\n        for i, w in enumerate(words):\n            tree.insert(w, i)\n        m, n = len(board), len(board[0])\n        ans = []\n        for i in range(m):\n            for j in range(n):\n                dfs(tree, i, j)\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Word Search II, apply General to satisfy target complexity",
+      "For Word Search II, brute-force all candidate combinations",
+      "For Word Search II, repeatedly sort intermediate states",
+      "For Word Search II, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0212.Word Search II"
+  },
+  {
+    "id": "79",
+    "title": "Word Search",
+    "content": "Given an `m x n` grid of characters `board` and a string `word`, return `true` *if* `word` *exists in the grid*.\n\nThe word can be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.",
+    "examples": "**Example 1:**\n\n```\n**Input:** board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"ABCCED\"\n**Output:** true\n```\n\n**Example 2:**\n\n```\n**Input:** board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"SEE\"\n**Output:** true\n```\n\n**Example 3:**\n\n```\n**Input:** board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"ABCB\"\n**Output:** false\n```",
+    "constraints": "**Constraints:**\n\n\t- `m == board.length`\n\t- `n = board[i].length`\n\t- `1 <= m, n <= 6`\n\t- `1 <= word.length <= 15`\n\t- `board` and `word` consists of only lowercase and uppercase English letters.\n\n \n\n**Follow up:** Could you use search pruning to make your solution faster with a larger `board`?",
+    "solution_code": "class Solution:\n    def exist(self, board: List[List[str]], word: str) -> bool:\n        def dfs(i: int, j: int, k: int) -> bool:\n            if k == len(word) - 1:\n                return board[i][j] == word[k]\n            if board[i][j] != word[k]:\n                return False\n            c = board[i][j]\n            board[i][j] = \"0\"\n            for a, b in pairwise((-1, 0, 1, 0, -1)):\n                x, y = i + a, j + b\n                ok = 0 <= x < m and 0 <= y < n and board[x][y] != \"0\"\n                if ok and dfs(x, y, k + 1):\n                    return True\n            board[i][j] = c\n            return False\n\n        m, n = len(board), len(board[0])\n        return any(dfs(i, j, 0) for i in range(m) for j in range(n))\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Word Search, apply General to satisfy target complexity",
+      "For Word Search, brute-force all candidate combinations",
+      "For Word Search, repeatedly sort intermediate states",
+      "For Word Search, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0079.Word Search"
+  },
+  {
+    "id": "139",
+    "title": "Word Break",
+    "content": "Given a string `s` and a dictionary of strings `wordDict`, return `true` if `s` can be segmented into a space-separated sequence of one or more dictionary words.\n\n**Note** that the same word in the dictionary may be reused multiple times in the segmentation.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"leetcode\", wordDict = [\"leet\",\"code\"]\n**Output:** true\n**Explanation:** Return true because \"leetcode\" can be segmented as \"leet code\".\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"applepenapple\", wordDict = [\"apple\",\"pen\"]\n**Output:** true\n**Explanation:** Return true because \"applepenapple\" can be segmented as \"apple pen apple\".\nNote that you are allowed to reuse a dictionary word.\n```\n\n**Example 3:**\n\n```\n**Input:** s = \"catsandog\", wordDict = [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]\n**Output:** false\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 300`\n\t- `1 <= wordDict.length <= 1000`\n\t- `1 <= wordDict[i].length <= 20`\n\t- `s` and `wordDict[i]` consist of only lowercase English letters.\n\t- All the strings of `wordDict` are **unique**.",
+    "solution_code": "class Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        words = set(wordDict)\n        n = len(s)\n        f = [True] + [False] * n\n        for i in range(1, n + 1):\n            f[i] = any(f[j] and s[j:i] in words for j in range(i))\n        return f[n]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Word Break, apply General to satisfy target complexity",
+      "For Word Break, brute-force all candidate combinations",
+      "For Word Break, repeatedly sort intermediate states",
+      "For Word Break, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0139.Word Break"
+  },
+  {
+    "id": "213",
+    "title": "House Robber II",
+    "content": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. All houses at this place are **arranged in a circle.** That means the first house is the neighbor of the last one. Meanwhile, adjacent houses have a security system connected, and it will automatically contact the police if two adjacent houses were broken into on the same night.\n\nGiven an integer array `nums` representing the amount of money of each house, return *the maximum amount of money you can rob tonight **without alerting the police***.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [2,3,2]\n**Output:** 3\n**Explanation:** You cannot rob house 1 (money = 2) and then rob house 3 (money = 2), because they are adjacent houses.\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [1,2,3,1]\n**Output:** 4\n**Explanation:** Rob house 1 (money = 1) and then rob house 3 (money = 3).\nTotal amount you can rob = 1 + 3 = 4.\n```\n\n**Example 3:**\n\n```\n**Input:** nums = [1,2,3]\n**Output:** 3\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= nums.length <= 100`\n\t- `0 <= nums[i] <= 1000`",
+    "solution_code": "class Solution:\n    def rob(self, nums: List[int]) -> int:\n        def _rob(nums):\n            f = g = 0\n            for x in nums:\n                f, g = max(f, g), f + x\n            return max(f, g)\n\n        if len(nums) == 1:\n            return nums[0]\n        return max(_rob(nums[1:]), _rob(nums[:-1]))\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For House Robber II, define DP state and transition from smaller solved subproblems",
+      "For House Robber II, greedily pick local maximum each step",
+      "For House Robber II, use union-find to merge states",
+      "For House Robber II, simulate all paths without memoization"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "state transition",
+      "base cases",
+      "space optimization"
+    ],
+    "source_dir": "0200-0299/0213.House Robber II"
+  },
+  {
+    "id": "5",
+    "title": "Longest Palindromic Substring",
+    "content": "Given a string `s`, return *the longest* *palindromic* *substring* in `s`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"babad\"\n**Output:** \"bab\"\n**Explanation:** \"aba\" is also a valid answer.\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"cbbd\"\n**Output:** \"bb\"\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 1000`\n\t- `s` consist of only digits and English letters.",
+    "solution_code": "class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        n = len(s)\n        f = [[True] * n for _ in range(n)]\n        k, mx = 0, 1\n        for i in range(n - 2, -1, -1):\n            for j in range(i + 1, n):\n                f[i][j] = False\n                if s[i] == s[j]:\n                    f[i][j] = f[i + 1][j - 1]\n                    if f[i][j] and mx < j - i + 1:\n                        k, mx = i, j - i + 1\n        return s[k : k + mx]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Longest Palindromic Substring, traverse with DFS/BFS and carry exact subtree/depth state",
+      "For Longest Palindromic Substring, sort node values and rebuild to preserve structure",
+      "For Longest Palindromic Substring, use two pointers on level array as primary method",
+      "For Longest Palindromic Substring, apply disjoint-set union on node values"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "subtree state",
+      "traversal order",
+      "null handling"
+    ],
+    "source_dir": "0000-0099/0005.Longest Palindromic Substring"
+  },
+  {
+    "id": "647",
+    "title": "Palindromic Substrings",
+    "content": "Given a string `s`, return *the number of **palindromic substrings** in it*.\n\nA string is a **palindrome** when it reads the same backward as forward.\n\nA **substring** is a contiguous sequence of characters within the string.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"abc\"\n**Output:** 3\n**Explanation:** Three palindromic strings: \"a\", \"b\", \"c\".\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"aaa\"\n**Output:** 6\n**Explanation:** Six palindromic strings: \"a\", \"a\", \"a\", \"aa\", \"aa\", \"aaa\".\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 1000`\n\t- `s` consists of lowercase English letters.",
+    "solution_code": "class Solution:\n    def countSubstrings(self, s: str) -> int:\n        ans, n = 0, len(s)\n        for k in range(n * 2 - 1):\n            i, j = k // 2, (k + 1) // 2\n            while ~i and j < n and s[i] == s[j]:\n                ans += 1\n                i, j = i - 1, j + 1\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Palindromic Substrings, traverse with DFS/BFS and carry exact subtree/depth state",
+      "For Palindromic Substrings, sort node values and rebuild to preserve structure",
+      "For Palindromic Substrings, use two pointers on level array as primary method",
+      "For Palindromic Substrings, apply disjoint-set union on node values"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "subtree state",
+      "traversal order",
+      "null handling"
+    ],
+    "source_dir": "0600-0699/0647.Palindromic Substrings"
+  },
+  {
+    "id": "91",
+    "title": "Decode Ways",
+    "content": "You have intercepted a secret message encoded as a string of numbers. The message is **decoded** via the following mapping:\n\n`\"1\" -> 'A'\n\n\"2\" -> 'B'\n\n...\n\n\"25\" -> 'Y'\n\n\"26\" -> 'Z'`\n\nHowever, while decoding the message, you realize that there are many different ways you can decode the message because some codes are contained in other codes (`\"2\"` and `\"5\"` vs `\"25\"`).\n\nFor example, `\"11106\"` can be decoded into:\n\n\t- `\"AAJF\"` with the grouping `(1, 1, 10, 6)`\n\t- `\"KJF\"` with the grouping `(11, 10, 6)`\n\t- The grouping `(1, 11, 06)` is invalid because `\"06\"` is not a valid code (only `\"6\"` is valid).\n\nNote: there may be strings that are impossible to decode.\n\nGiven a string s containing only digits, return the **number of ways** to **decode** it. If the entire string cannot be decoded in any valid way, return `0`.\n\nThe test cases are generated so that the answer fits in a **32-bit** integer.",
+    "examples": "**Example 1:**\n\n**Input:** s = \"12\"\n\n**Output:** 2\n\n**Explanation:**\n\n\"12\" could be decoded as \"AB\" (1 2) or \"L\" (12).\n\n**Example 2:**\n\n**Input:** s = \"226\"\n\n**Output:** 3\n\n**Explanation:**\n\n\"226\" could be decoded as \"BZ\" (2 26), \"VF\" (22 6), or \"BBF\" (2 2 6).\n\n**Example 3:**\n\n**Input:** s = \"06\"\n\n**Output:** 0\n\n**Explanation:**\n\n\"06\" cannot be mapped to \"F\" because of the leading zero (\"6\" is different from \"06\"). In this case, the string is not a valid encoding, so return 0.",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 100`\n\t- `s` contains only digits and may contain leading zero(s).",
+    "solution_code": "class Solution:\n    def numDecodings(self, s: str) -> int:\n        n = len(s)\n        f = [1] + [0] * n\n        for i, c in enumerate(s, 1):\n            if c != \"0\":\n                f[i] = f[i - 1]\n            if i > 1 and s[i - 2] != \"0\" and int(s[i - 2 : i]) <= 26:\n                f[i] += f[i - 2]\n        return f[n]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Decode Ways, apply General to satisfy target complexity",
+      "For Decode Ways, brute-force all candidate combinations",
+      "For Decode Ways, repeatedly sort intermediate states",
+      "For Decode Ways, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0091.Decode Ways"
+  },
+  {
+    "id": "133",
+    "title": "Clone Graph",
+    "content": "Given a reference of a node in a **connected** undirected graph.\n\nReturn a **deep copy** (clone) of the graph.\n\nEach node in the graph contains a value (`int`) and a list (`List[Node]`) of its neighbors.\n\n```\nclass Node {\n    public int val;\n    public List<Node> neighbors;\n}\n```\n\n \n\n**Test case format:**\n\nFor simplicity, each node's value is the same as the node's index (1-indexed). For example, the first node with `val == 1`, the second node with `val == 2`, and so on. The graph is represented in the test case using an adjacency list.\n\nAn adjacency list is a collection of unordered lists used to represent a finite graph. Each list describes the set of neighbors of a node in the graph.\n\nThe given node will always be the first node with `val = 1`. You must return the **copy of the given node** as a reference to the cloned graph.",
+    "examples": "**Example 1:**\n\n```\n**Input:** adjList = [[2,4],[1,3],[2,4],[1,3]]\n**Output:** [[2,4],[1,3],[2,4],[1,3]]\n**Explanation:** There are 4 nodes in the graph.\n1st node (val = 1)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).\n2nd node (val = 2)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).\n3rd node (val = 3)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).\n4th node (val = 4)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).\n```\n\n**Example 2:**\n\n```\n**Input:** adjList = [[]]\n**Output:** [[]]\n**Explanation:** Note that the input contains one empty list. The graph consists of only one node with val = 1 and it does not have any neighbors.\n```\n\n**Example 3:**\n\n```\n**Input:** adjList = []\n**Output:** []\n**Explanation:** This an empty graph, it does not have any nodes.\n```",
+    "constraints": "**Constraints:**\n\n\t- The number of nodes in the graph is in the range `[0, 100]`.\n\t- `1 <= Node.val <= 100`\n\t- `Node.val` is unique for each node.\n\t- There are no repeated edges and no self-loops in the graph.\n\t- The Graph is connected and all nodes can be visited starting from the given node.",
+    "solution_code": "\"\"\"\n# Definition for a Node.\nclass Node:\n    def __init__(self, val = 0, neighbors = None):\n        self.val = val\n        self.neighbors = neighbors if neighbors is not None else []\n\"\"\"\n\nfrom typing import Optional\n\n\nclass Solution:\n    def cloneGraph(self, node: Optional[\"Node\"]) -> Optional[\"Node\"]:\n        def dfs(node):\n            if node is None:\n                return None\n            if node in g:\n                return g[node]\n            cloned = Node(node.val)\n            g[node] = cloned\n            for nxt in node.neighbors:\n                cloned.neighbors.append(dfs(nxt))\n            return cloned\n\n        g = defaultdict()\n        return dfs(node)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Clone Graph, apply General to satisfy target complexity",
+      "For Clone Graph, brute-force all candidate combinations",
+      "For Clone Graph, repeatedly sort intermediate states",
+      "For Clone Graph, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0133.Clone Graph"
+  },
+  {
+    "id": "207",
+    "title": "Course Schedule",
+    "content": "There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you **must** take course `bi` first if you want to take course `ai`.\n\n\t- For example, the pair `[0, 1]`, indicates that to take course `0` you have to first take course `1`.\n\nReturn `true` if you can finish all courses. Otherwise, return `false`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** numCourses = 2, prerequisites = [[1,0]]\n**Output:** true\n**Explanation:** There are a total of 2 courses to take. \nTo take course 1 you should have finished course 0. So it is possible.\n```\n\n**Example 2:**\n\n```\n**Input:** numCourses = 2, prerequisites = [[1,0],[0,1]]\n**Output:** false\n**Explanation:** There are a total of 2 courses to take. \nTo take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= numCourses <= 2000`\n\t- `0 <= prerequisites.length <= 5000`\n\t- `prerequisites[i].length == 2`\n\t- `0 <= ai, bi < numCourses`\n\t- All the pairs prerequisites[i] are **unique**.",
+    "solution_code": "class Solution:\n    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:\n        g = [[] for _ in range(numCourses)]\n        indeg = [0] * numCourses\n        for a, b in prerequisites:\n            g[b].append(a)\n            indeg[a] += 1\n        q = [i for i, x in enumerate(indeg) if x == 0]\n        for i in q:\n            numCourses -= 1\n            for j in g[i]:\n                indeg[j] -= 1\n                if indeg[j] == 0:\n                    q.append(j)\n        return numCourses == 0\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Course Schedule, apply General to satisfy target complexity",
+      "For Course Schedule, brute-force all candidate combinations",
+      "For Course Schedule, repeatedly sort intermediate states",
+      "For Course Schedule, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0207.Course Schedule"
+  },
+  {
+    "id": "210",
+    "title": "Course Schedule II",
+    "content": "There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you **must** take course `bi` first if you want to take course `ai`.\n\n\t- For example, the pair `[0, 1]`, indicates that to take course `0` you have to first take course `1`.\n\nReturn *the ordering of courses you should take to finish all courses*. If there are many valid answers, return **any** of them. If it is impossible to finish all courses, return **an empty array**.",
+    "examples": "**Example 1:**\n\n```\n**Input:** numCourses = 2, prerequisites = [[1,0]]\n**Output:** [0,1]\n**Explanation:** There are a total of 2 courses to take. To take course 1 you should have finished course 0. So the correct course order is [0,1].\n```\n\n**Example 2:**\n\n```\n**Input:** numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]\n**Output:** [0,2,1,3]\n**Explanation:** There are a total of 4 courses to take. To take course 3 you should have finished both courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0.\nSo one correct course order is [0,1,2,3]. Another correct ordering is [0,2,1,3].\n```\n\n**Example 3:**\n\n```\n**Input:** numCourses = 1, prerequisites = []\n**Output:** [0]\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= numCourses <= 2000`\n\t- `0 <= prerequisites.length <= numCourses * (numCourses - 1)`\n\t- `prerequisites[i].length == 2`\n\t- `0 <= ai, bi < numCourses`\n\t- `ai != bi`\n\t- All the pairs `[ai, bi]` are **distinct**.",
+    "solution_code": "class Solution:\n    def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:\n        g = defaultdict(list)\n        indeg = [0] * numCourses\n        for a, b in prerequisites:\n            g[b].append(a)\n            indeg[a] += 1\n        ans = []\n        q = deque(i for i, x in enumerate(indeg) if x == 0)\n        while q:\n            i = q.popleft()\n            ans.append(i)\n            for j in g[i]:\n                indeg[j] -= 1\n                if indeg[j] == 0:\n                    q.append(j)\n        return ans if len(ans) == numCourses else []\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Course Schedule II, apply General to satisfy target complexity",
+      "For Course Schedule II, brute-force all candidate combinations",
+      "For Course Schedule II, repeatedly sort intermediate states",
+      "For Course Schedule II, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0210.Course Schedule II"
+  },
+  {
+    "id": "994",
+    "title": "Rotting Oranges",
+    "content": "You are given an `m x n` `grid` where each cell can have one of three values:\n\n\t- `0` representing an empty cell,\n\t- `1` representing a fresh orange, or\n\t- `2` representing a rotten orange.\n\nEvery minute, any fresh orange that is **4-directionally adjacent** to a rotten orange becomes rotten.\n\nReturn *the minimum number of minutes that must elapse until no cell has a fresh orange*. If *this is impossible, return* `-1`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** grid = [[2,1,1],[1,1,0],[0,1,1]]\n**Output:** 4\n```\n\n**Example 2:**\n\n```\n**Input:** grid = [[2,1,1],[0,1,1],[1,0,1]]\n**Output:** -1\n**Explanation:** The orange in the bottom left corner (row 2, column 0) is never rotten, because rotting only happens 4-directionally.\n```\n\n**Example 3:**\n\n```\n**Input:** grid = [[0,2]]\n**Output:** 0\n**Explanation:** Since there are already no fresh oranges at minute 0, the answer is just 0.\n```",
+    "constraints": "**Constraints:**\n\n\t- `m == grid.length`\n\t- `n == grid[i].length`\n\t- `1 <= m, n <= 10`\n\t- `grid[i][j]` is `0`, `1`, or `2`.",
+    "solution_code": "class Solution:\n    def orangesRotting(self, grid: List[List[int]]) -> int:\n        m, n = len(grid), len(grid[0])\n        cnt = 0\n        q = deque()\n        for i, row in enumerate(grid):\n            for j, x in enumerate(row):\n                if x == 2:\n                    q.append((i, j))\n                elif x == 1:\n                    cnt += 1\n        ans = 0\n        dirs = (-1, 0, 1, 0, -1)\n        while q and cnt:\n            ans += 1\n            for _ in range(len(q)):\n                i, j = q.popleft()\n                for a, b in pairwise(dirs):\n                    x, y = i + a, j + b\n                    if 0 <= x < m and 0 <= y < n and grid[x][y] == 1:\n                        grid[x][y] = 2\n                        q.append((x, y))\n                        cnt -= 1\n                        if cnt == 0:\n                            return ans\n        return -1 if cnt else 0\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Rotting Oranges, apply General to satisfy target complexity",
+      "For Rotting Oranges, brute-force all candidate combinations",
+      "For Rotting Oranges, repeatedly sort intermediate states",
+      "For Rotting Oranges, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0900-0999/0994.Rotting Oranges"
+  },
+  {
+    "id": "417",
+    "title": "Pacific Atlantic Water Flow",
+    "content": "There is an `m x n` rectangular island that borders both the **Pacific Ocean** and **Atlantic Ocean**. The **Pacific Ocean** touches the island's left and top edges, and the **Atlantic Ocean** touches the island's right and bottom edges.\n\nThe island is partitioned into a grid of square cells. You are given an `m x n` integer matrix `heights` where `heights[r][c]` represents the **height above sea level** of the cell at coordinate `(r, c)`.\n\nThe island receives a lot of rain, and the rain water can flow to neighboring cells directly north, south, east, and west if the neighboring cell's height is **less than or equal to** the current cell's height. Water can flow from any cell adjacent to an ocean into the ocean.\n\nReturn *a **2D list** of grid coordinates *`result`* where *`result[i] = [ri, ci]`* denotes that rain water can flow from cell *`(ri, ci)`* to **both** the Pacific and Atlantic oceans*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]\n**Output:** [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]\n**Explanation:** The following cells can flow to the Pacific and Atlantic oceans, as shown below:\n[0,4]: [0,4] -> Pacific Ocean \n       [0,4] -> Atlantic Ocean\n[1,3]: [1,3] -> [0,3] -> Pacific Ocean \n       [1,3] -> [1,4] -> Atlantic Ocean\n[1,4]: [1,4] -> [1,3] -> [0,3] -> Pacific Ocean \n       [1,4] -> Atlantic Ocean\n[2,2]: [2,2] -> [1,2] -> [0,2] -> Pacific Ocean \n       [2,2] -> [2,3] -> [2,4] -> Atlantic Ocean\n[3,0]: [3,0] -> Pacific Ocean \n       [3,0] -> [4,0] -> Atlantic Ocean\n[3,1]: [3,1] -> [3,0] -> Pacific Ocean \n       [3,1] -> [4,1] -> Atlantic Ocean\n[4,0]: [4,0] -> Pacific Ocean \n       [4,0] -> Atlantic Ocean\nNote that there are other possible paths for these cells to flow to the Pacific and Atlantic oceans.\n```\n\n**Example 2:**\n\n```\n**Input:** heights = [[1]]\n**Output:** [[0,0]]\n**Explanation:** The water can flow from the only cell to the Pacific and Atlantic oceans.\n```",
+    "constraints": "**Constraints:**\n\n\t- `m == heights.length`\n\t- `n == heights[r].length`\n\t- `1 <= m, n <= 200`\n\t- `0 <= heights[r][c] <= 105`",
+    "solution_code": "class Solution:\n    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:\n        def bfs(q: Deque[Tuple[int, int]], vis: List[List[bool]]) -> None:\n            while q:\n                x, y = q.popleft()\n                for dx, dy in pairwise(dirs):\n                    nx, ny = x + dx, y + dy\n                    if (\n                        0 <= nx < m\n                        and 0 <= ny < n\n                        and not vis[nx][ny]\n                        and heights[nx][ny] >= heights[x][y]\n                    ):\n                        vis[nx][ny] = True\n                        q.append((nx, ny))\n\n        m, n = len(heights), len(heights[0])\n        vis1 = [[False] * n for _ in range(m)]\n        vis2 = [[False] * n for _ in range(m)]\n        q1: Deque[Tuple[int, int]] = deque()\n        q2: Deque[Tuple[int, int]] = deque()\n        dirs = (-1, 0, 1, 0, -1)\n\n        for i in range(m):\n            q1.append((i, 0))\n            vis1[i][0] = True\n            q2.append((i, n - 1))\n            vis2[i][n - 1] = True\n\n        for j in range(n):\n            q1.append((0, j))\n            vis1[0][j] = True\n            q2.append((m - 1, j))\n            vis2[m - 1][j] = True\n\n        bfs(q1, vis1)\n        bfs(q2, vis2)\n\n        return [(i, j) for i in range(m) for j in range(n) if vis1[i][j] and vis2[i][j]]\n",
+    "primary_pattern": "Reverse Reachability DFS",
+    "all_patterns": [
+      "Matrix",
+      "DFS",
+      "BFS"
+    ],
+    "mcq_options": [
+      "For Pacific Atlantic Water Flow, apply Reverse Reachability DFS to satisfy target complexity",
+      "For Pacific Atlantic Water Flow, brute-force all candidate combinations",
+      "For Pacific Atlantic Water Flow, repeatedly sort intermediate states",
+      "For Pacific Atlantic Water Flow, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "reverse",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0400-0499/0417.Pacific Atlantic Water Flow"
+  },
+  {
+    "id": "200",
+    "title": "Number of Islands",
+    "content": "Given an `m x n` 2D binary grid `grid` which represents a map of `'1'`s (land) and `'0'`s (water), return *the number of islands*.\n\nAn **island** is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.",
+    "examples": "**Example 1:**\n\n```\n**Input:** grid = [\n  [\"1\",\"1\",\"1\",\"1\",\"0\"],\n  [\"1\",\"1\",\"0\",\"1\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"0\",\"0\"]\n]\n**Output:** 1\n```\n\n**Example 2:**\n\n```\n**Input:** grid = [\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"1\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"1\",\"1\"]\n]\n**Output:** 3\n```",
+    "constraints": "**Constraints:**\n\n\t- `m == grid.length`\n\t- `n == grid[i].length`\n\t- `1 <= m, n <= 300`\n\t- `grid[i][j]` is `'0'` or `'1'`.",
+    "solution_code": "class Solution:\n    def numIslands(self, grid: List[List[str]]) -> int:\n        def dfs(i, j):\n            grid[i][j] = '0'\n            for a, b in pairwise(dirs):\n                x, y = i + a, j + b\n                if 0 <= x < m and 0 <= y < n and grid[x][y] == '1':\n                    dfs(x, y)\n\n        ans = 0\n        dirs = (-1, 0, 1, 0, -1)\n        m, n = len(grid), len(grid[0])\n        for i in range(m):\n            for j in range(n):\n                if grid[i][j] == '1':\n                    dfs(i, j)\n                    ans += 1\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Number of Islands, apply General to satisfy target complexity",
+      "For Number of Islands, brute-force all candidate combinations",
+      "For Number of Islands, repeatedly sort intermediate states",
+      "For Number of Islands, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0200.Number of Islands"
+  },
+  {
+    "id": "695",
+    "title": "Max Area of Island",
+    "content": "You are given an `m x n` binary matrix `grid`. An island is a group of `1`'s (representing land) connected **4-directionally** (horizontal or vertical.) You may assume all four edges of the grid are surrounded by water.\n\nThe **area** of an island is the number of cells with a value `1` in the island.\n\nReturn *the maximum **area** of an island in *`grid`. If there is no island, return `0`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** grid = [[0,0,1,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,1,1,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,1,1,0,0,1,0,1,0,0],[0,1,0,0,1,1,0,0,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,0,0,0,0,0,0,1,1,0,0,0,0]]\n**Output:** 6\n**Explanation:** The answer is not 11, because the island must be connected 4-directionally.\n```\n\n**Example 2:**\n\n```\n**Input:** grid = [[0,0,0,0,0,0,0,0]]\n**Output:** 0\n```",
+    "constraints": "**Constraints:**\n\n\t- `m == grid.length`\n\t- `n == grid[i].length`\n\t- `1 <= m, n <= 50`\n\t- `grid[i][j]` is either `0` or `1`.",
+    "solution_code": "class Solution:\n    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:\n        def dfs(i: int, j: int) -> int:\n            if grid[i][j] == 0:\n                return 0\n            ans = 1\n            grid[i][j] = 0\n            dirs = (-1, 0, 1, 0, -1)\n            for a, b in pairwise(dirs):\n                x, y = i + a, j + b\n                if 0 <= x < m and 0 <= y < n:\n                    ans += dfs(x, y)\n            return ans\n\n        m, n = len(grid), len(grid[0])\n        return max(dfs(i, j) for i in range(m) for j in range(n))\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Max Area of Island, apply General to satisfy target complexity",
+      "For Max Area of Island, brute-force all candidate combinations",
+      "For Max Area of Island, repeatedly sort intermediate states",
+      "For Max Area of Island, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0600-0699/0695.Max Area of Island"
+  },
+  {
+    "id": "733",
+    "title": "Flood Fill",
+    "content": "You are given an image represented by an `m x n` grid of integers `image`, where `image[i][j]` represents the pixel value of the image. You are also given three integers `sr`, `sc`, and `color`. Your task is to perform a **flood fill** on the image starting from the pixel `image[sr][sc]`.\n\nTo perform a **flood fill**:\n\n\t- Begin with the starting pixel and change its color to `color`.\n\t- Perform the same process for each pixel that is **directly adjacent** (pixels that share a side with the original pixel, either horizontally or vertically) and shares the **same color** as the starting pixel.\n\t- Keep **repeating** this process by checking neighboring pixels of the *updated* pixels and modifying their color if it matches the original color of the starting pixel.\n\t- The process **stops** when there are **no more** adjacent pixels of the original color to update.\n\nReturn the **modified** image after performing the flood fill.",
+    "examples": "**Example 1:**\n\n**Input:** image = [[1,1,1],[1,1,0],[1,0,1]], sr = 1, sc = 1, color = 2\n\n**Output:** [[2,2,2],[2,2,0],[2,0,1]]\n\n**Explanation:**\n\nFrom the center of the image with position `(sr, sc) = (1, 1)` (i.e., the red pixel), all pixels connected by a path of the same color as the starting pixel (i.e., the blue pixels) are colored with the new color.\n\nNote the bottom corner is **not** colored 2, because it is not horizontally or vertically connected to the starting pixel.\n\n**Example 2:**\n\n**Input:** image = [[0,0,0],[0,0,0]], sr = 0, sc = 0, color = 0\n\n**Output:** [[0,0,0],[0,0,0]]\n\n**Explanation:**\n\nThe starting pixel is already colored with 0, which is the same as the target color. Therefore, no changes are made to the image.",
+    "constraints": "**Constraints:**\n\n\t- `m == image.length`\n\t- `n == image[i].length`\n\t- `1 <= m, n <= 50`\n\t- `0 <= image[i][j], color < 216`\n\t- `0 <= sr < m`\n\t- `0 <= sc < n`",
+    "solution_code": "class Solution:\n    def floodFill(\n        self, image: List[List[int]], sr: int, sc: int, color: int\n    ) -> List[List[int]]:\n        def dfs(i: int, j: int):\n            image[i][j] = color\n            for a, b in pairwise(dirs):\n                x, y = i + a, j + b\n                if 0 <= x < len(image) and 0 <= y < len(image[0]) and image[x][y] == oc:\n                    dfs(x, y)\n\n        oc = image[sr][sc]\n        if oc != color:\n            dirs = (-1, 0, 1, 0, -1)\n            dfs(sr, sc)\n        return image\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Flood Fill, apply General to satisfy target complexity",
+      "For Flood Fill, brute-force all candidate combinations",
+      "For Flood Fill, repeatedly sort intermediate states",
+      "For Flood Fill, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0700-0799/0733.Flood Fill"
+  },
+  {
+    "id": "130",
+    "title": "Surrounded Regions",
+    "content": "You are given an `m x n` matrix `board` containing **letters** `'X'` and `'O'`, **capture regions** that are **surrounded**:\n\n\t- **Connect**: A cell is connected to adjacent cells horizontally or vertically.\n\t- **Region**: To form a region **connect every** `'O'` cell.\n\t- **Surround**: A region is surrounded if none of the `'O'` cells in that region are on the edge of the board. Such regions are **completely enclosed **by `'X'` cells.\n\nTo capture a **surrounded region**, replace all `'O'`s with `'X'`s **in-place** within the original board. You do not need to return anything.",
+    "examples": "**Example 1:**\n\n**Input:** board = [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"O\",\"X\"],[\"X\",\"X\",\"O\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]\n\n**Output:** [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]\n\n**Explanation:**\n\nIn the above diagram, the bottom region is not captured because it is on the edge of the board and cannot be surrounded.\n\n**Example 2:**\n\n**Input:** board = [[\"X\"]]\n\n**Output:** [[\"X\"]]",
+    "constraints": "**Constraints:**\n\n\t- `m == board.length`\n\t- `n == board[i].length`\n\t- `1 <= m, n <= 200`\n\t- `board[i][j]` is `'X'` or `'O'`.",
+    "solution_code": "class Solution:\n    def solve(self, board: List[List[str]]) -> None:\n        def dfs(i: int, j: int):\n            if not (0 <= i < m and 0 <= j < n and board[i][j] == \"O\"):\n                return\n            board[i][j] = \".\"\n            for a, b in pairwise((-1, 0, 1, 0, -1)):\n                dfs(i + a, j + b)\n\n        m, n = len(board), len(board[0])\n        for i in range(m):\n            dfs(i, 0)\n            dfs(i, n - 1)\n        for j in range(n):\n            dfs(0, j)\n            dfs(m - 1, j)\n        for i in range(m):\n            for j in range(n):\n                if board[i][j] == \".\":\n                    board[i][j] = \"O\"\n                elif board[i][j] == \"O\":\n                    board[i][j] = \"X\"\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Surrounded Regions, apply General to satisfy target complexity",
+      "For Surrounded Regions, brute-force all candidate combinations",
+      "For Surrounded Regions, repeatedly sort intermediate states",
+      "For Surrounded Regions, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0130.Surrounded Regions"
+  },
+  {
+    "id": "1334",
+    "title": "Find the City With the Smallest Number of Neighbors at a Threshold Distance",
+    "content": "There are `n` cities numbered from `0` to `n-1`. Given the array `edges` where `edges[i] = [fromi, toi, weighti]` represents a bidirectional and weighted edge between cities `fromi` and `toi`, and given the integer `distanceThreshold`.\n\nReturn the city with the smallest number of cities that are reachable through some path and whose distance is **at most** `distanceThreshold`, If there are multiple such cities, return the city with the greatest number.\n\nNotice that the distance of a path connecting cities ***i*** and ***j*** is equal to the sum of the edges' weights along that path.",
+    "examples": "**Example 1:**\n\n```\n**Input:** n = 4, edges = [[0,1,3],[1,2,1],[1,3,4],[2,3,1]], distanceThreshold = 4\n**Output:** 3\n**Explanation: **The figure above describes the graph. \nThe neighboring cities at a distanceThreshold = 4 for each city are:\nCity 0 -> [City 1, City 2] \nCity 1 -> [City 0, City 2, City 3] \nCity 2 -> [City 0, City 1, City 3] \nCity 3 -> [City 1, City 2] \nCities 0 and 3 have 2 neighboring cities at a distanceThreshold = 4, but we have to return city 3 since it has the greatest number.\n```\n\n**Example 2:**\n\n```\n**Input:** n = 5, edges = [[0,1,2],[0,4,8],[1,2,3],[1,4,2],[2,3,1],[3,4,1]], distanceThreshold = 2\n**Output:** 0\n**Explanation: **The figure above describes the graph. \nThe neighboring cities at a distanceThreshold = 2 for each city are:\nCity 0 -> [City 1] \nCity 1 -> [City 0, City 4] \nCity 2 -> [City 3, City 4] \nCity 3 -> [City 2, City 4]\nCity 4 -> [City 1, City 2, City 3] \nThe city 0 has 1 neighboring city at a distanceThreshold = 2.\n```",
+    "constraints": "**Constraints:**\n\n\t- `2 <= n <= 100`\n\t- `1 <= edges.length <= n * (n - 1) / 2`\n\t- `edges[i].length == 3`\n\t- `0 <= fromi < toi < n`\n\t- `1 <= weighti, distanceThreshold <= 10^4`\n\t- All pairs `(fromi, toi)` are distinct.",
+    "solution_code": "class Solution:\n    def findTheCity(\n        self, n: int, edges: List[List[int]], distanceThreshold: int\n    ) -> int:\n        def dijkstra(u: int) -> int:\n            dist = [inf] * n\n            dist[u] = 0\n            vis = [False] * n\n            for _ in range(n):\n                k = -1\n                for j in range(n):\n                    if not vis[j] and (k == -1 or dist[k] > dist[j]):\n                        k = j\n                vis[k] = True\n                for j in range(n):\n                    # dist[j] = min(dist[j], dist[k] + g[k][j])\n                    if dist[k] + g[k][j] < dist[j]:\n                        dist[j] = dist[k] + g[k][j]\n            return sum(d <= distanceThreshold for d in dist)\n\n        g = [[inf] * n for _ in range(n)]\n        for f, t, w in edges:\n            g[f][t] = g[t][f] = w\n        ans, cnt = n, inf\n        for i in range(n - 1, -1, -1):\n            if (t := dijkstra(i)) < cnt:\n                cnt, ans = t, i\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Find the City With the Smallest Number of Neighbors at a Threshold Distance, apply General to satisfy target complexity",
+      "For Find the City With the Smallest Number of Neighbors at a Threshold Distance, brute-force all candidate combinations",
+      "For Find the City With the Smallest Number of Neighbors at a Threshold Distance, repeatedly sort intermediate states",
+      "For Find the City With the Smallest Number of Neighbors at a Threshold Distance, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "1300-1399/1334.Find the City With the Smallest Number of Neighbors at a Threshold Distance"
+  },
+  {
+    "id": "684",
+    "title": "Redundant Connection",
+    "content": "In this problem, a tree is an **undirected graph** that is connected and has no cycles.\n\nYou are given a graph that started as a tree with `n` nodes labeled from `1` to `n`, with one additional edge added. The added edge has two **different** vertices chosen from `1` to `n`, and was not an edge that already existed. The graph is represented as an array `edges` of length `n` where `edges[i] = [ai, bi]` indicates that there is an edge between nodes `ai` and `bi` in the graph.\n\nReturn *an edge that can be removed so that the resulting graph is a tree of *`n`* nodes*. If there are multiple answers, return the answer that occurs last in the input.",
+    "examples": "**Example 1:**\n\n```\n**Input:** edges = [[1,2],[1,3],[2,3]]\n**Output:** [2,3]\n```\n\n**Example 2:**\n\n```\n**Input:** edges = [[1,2],[2,3],[3,4],[1,4],[1,5]]\n**Output:** [1,4]\n```",
+    "constraints": "**Constraints:**\n\n\t- `n == edges.length`\n\t- `3 <= n <= 1000`\n\t- `edges[i].length == 2`\n\t- `1 <= ai < bi <= edges.length`\n\t- `ai != bi`\n\t- There are no repeated edges.\n\t- The given graph is connected.",
+    "solution_code": "class Solution:\n    def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:\n        def find(x: int) -> int:\n            if p[x] != x:\n                p[x] = find(p[x])\n            return p[x]\n\n        p = list(range(len(edges)))\n        for a, b in edges:\n            pa, pb = find(a - 1), find(b - 1)\n            if pa == pb:\n                return [a, b]\n            p[pa] = pb\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Redundant Connection, apply General to satisfy target complexity",
+      "For Redundant Connection, brute-force all candidate combinations",
+      "For Redundant Connection, repeatedly sort intermediate states",
+      "For Redundant Connection, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0600-0699/0684.Redundant Connection"
+  },
+  {
+    "id": "721",
+    "title": "Accounts Merge",
+    "content": "Given a list of `accounts` where each element `accounts[i]` is a list of strings, where the first element `accounts[i][0]` is a name, and the rest of the elements are **emails** representing emails of the account.\n\nNow, we would like to merge these accounts. Two accounts definitely belong to the same person if there is some common email to both accounts. Note that even if two accounts have the same name, they may belong to different people as people could have the same name. A person can have any number of accounts initially, but all of their accounts definitely have the same name.\n\nAfter merging the accounts, return the accounts in the following format: the first element of each account is the name, and the rest of the elements are emails **in sorted order**. The accounts themselves can be returned in **any order**.",
+    "examples": "**Example 1:**\n\n```\n**Input:** accounts = [[\"John\",\"johnsmith@mail.com\",\"john_newyork@mail.com\"],[\"John\",\"johnsmith@mail.com\",\"john00@mail.com\"],[\"Mary\",\"mary@mail.com\"],[\"John\",\"johnnybravo@mail.com\"]]\n**Output:** [[\"John\",\"john00@mail.com\",\"john_newyork@mail.com\",\"johnsmith@mail.com\"],[\"Mary\",\"mary@mail.com\"],[\"John\",\"johnnybravo@mail.com\"]]\n**Explanation:**\nThe first and second John's are the same person as they have the common email \"johnsmith@mail.com\".\nThe third John and Mary are different people as none of their email addresses are used by other accounts.\nWe could return these lists in any order, for example the answer [['Mary', 'mary@mail.com'], ['John', 'johnnybravo@mail.com'], \n['John', 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com']] would still be accepted.\n```\n\n**Example 2:**\n\n```\n**Input:** accounts = [[\"Gabe\",\"Gabe0@m.co\",\"Gabe3@m.co\",\"Gabe1@m.co\"],[\"Kevin\",\"Kevin3@m.co\",\"Kevin5@m.co\",\"Kevin0@m.co\"],[\"Ethan\",\"Ethan5@m.co\",\"Ethan4@m.co\",\"Ethan0@m.co\"],[\"Hanzo\",\"Hanzo3@m.co\",\"Hanzo1@m.co\",\"Hanzo0@m.co\"],[\"Fern\",\"Fern5@m.co\",\"Fern1@m.co\",\"Fern0@m.co\"]]\n**Output:** [[\"Ethan\",\"Ethan0@m.co\",\"Ethan4@m.co\",\"Ethan5@m.co\"],[\"Gabe\",\"Gabe0@m.co\",\"Gabe1@m.co\",\"Gabe3@m.co\"],[\"Hanzo\",\"Hanzo0@m.co\",\"Hanzo1@m.co\",\"Hanzo3@m.co\"],[\"Kevin\",\"Kevin0@m.co\",\"Kevin3@m.co\",\"Kevin5@m.co\"],[\"Fern\",\"Fern0@m.co\",\"Fern1@m.co\",\"Fern5@m.co\"]]\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= accounts.length <= 1000`\n\t- `2 <= accounts[i].length <= 10`\n\t- `1 <= accounts[i][j].length <= 30`\n\t- `accounts[i][0]` consists of English letters.\n\t- `accounts[i][j] (for j > 0)` is a valid email.",
+    "solution_code": "class UnionFind:\n    def __init__(self, n):\n        self.p = list(range(n))\n        self.size = [1] * n\n\n    def find(self, x):\n        if self.p[x] != x:\n            self.p[x] = self.find(self.p[x])\n        return self.p[x]\n\n    def union(self, a, b):\n        pa, pb = self.find(a), self.find(b)\n        if pa == pb:\n            return False\n        if self.size[pa] > self.size[pb]:\n            self.p[pb] = pa\n            self.size[pa] += self.size[pb]\n        else:\n            self.p[pa] = pb\n            self.size[pb] += self.size[pa]\n        return True\n\n\nclass Solution:\n    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:\n        uf = UnionFind(len(accounts))\n        d = {}\n        for i, (_, *emails) in enumerate(accounts):\n            for email in emails:\n                if email in d:\n                    uf.union(i, d[email])\n                else:\n                    d[email] = i\n        g = defaultdict(set)\n        for i, (_, *emails) in enumerate(accounts):\n            root = uf.find(i)\n            g[root].update(emails)\n        return [[accounts[root][0]] + sorted(emails) for root, emails in g.items()]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Accounts Merge, apply General to satisfy target complexity",
+      "For Accounts Merge, brute-force all candidate combinations",
+      "For Accounts Merge, repeatedly sort intermediate states",
+      "For Accounts Merge, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0700-0799/0721.Accounts Merge"
+  },
+  {
+    "id": "973",
+    "title": "K Closest Points to Origin",
+    "content": "Given an array of `points` where `points[i] = [xi, yi]` represents a point on the **X-Y** plane and an integer `k`, return the `k` closest points to the origin `(0, 0)`.\n\nThe distance between two points on the **X-Y** plane is the Euclidean distance (i.e., `√(x1 - x2)2 + (y1 - y2)2`).\n\nYou may return the answer in **any order**. The answer is **guaranteed** to be **unique** (except for the order that it is in).",
+    "examples": "**Example 1:**\n\n```\n**Input:** points = [[1,3],[-2,2]], k = 1\n**Output:** [[-2,2]]\n**Explanation:**\nThe distance between (1, 3) and the origin is sqrt(10).\nThe distance between (-2, 2) and the origin is sqrt(8).\nSince sqrt(8) < sqrt(10), (-2, 2) is closer to the origin.\nWe only want the closest k = 1 points from the origin, so the answer is just [[-2,2]].\n```\n\n**Example 2:**\n\n```\n**Input:** points = [[3,3],[5,-1],[-2,4]], k = 2\n**Output:** [[3,3],[-2,4]]\n**Explanation:** The answer [[-2,4],[3,3]] would also be accepted.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= k <= points.length <= 104`\n\t- `-104 <= xi, yi <= 104`",
+    "solution_code": "class Solution:\n    def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:\n        points.sort(key=lambda p: hypot(p[0], p[1]))\n        return points[:k]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For K Closest Points to Origin, apply General to satisfy target complexity",
+      "For K Closest Points to Origin, brute-force all candidate combinations",
+      "For K Closest Points to Origin, repeatedly sort intermediate states",
+      "For K Closest Points to Origin, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0900-0999/0973.K Closest Points to Origin"
+  },
+  {
+    "id": "621",
+    "title": "Task Scheduler",
+    "content": "You are given an array of CPU `tasks`, each labeled with a letter from A to Z, and a number `n`. Each CPU interval can be idle or allow the completion of one task. Tasks can be completed in any order, but there's a constraint: there has to be a gap of **at least** `n` intervals between two tasks with the same label.\n\nReturn the **minimum** number of CPU intervals required to complete all tasks.",
+    "examples": "**Example 1:**\n\n**Input:** tasks = [\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], n = 2\n\n**Output:** 8\n\n**Explanation:** A possible sequence is: A -> B -> idle -> A -> B -> idle -> A -> B.\n\nAfter completing task A, you must wait two intervals before doing A again. The same applies to task B. In the 3rd interval, neither A nor B can be done, so you idle. By the 4th interval, you can do A again as 2 intervals have passed.\n\n**Example 2:**\n\n**Input:** tasks = [\"A\",\"C\",\"A\",\"B\",\"D\",\"B\"], n = 1\n\n**Output:** 6\n\n**Explanation:** A possible sequence is: A -> B -> C -> D -> A -> B.\n\nWith a cooling interval of 1, you can repeat a task after just one other task.\n\n**Example 3:**\n\n**Input:** tasks = [\"A\",\"A\",\"A\", \"B\",\"B\",\"B\"], n = 3\n\n**Output:** 10\n\n**Explanation:** A possible sequence is: A -> B -> idle -> idle -> A -> B -> idle -> idle -> A -> B.\n\nThere are only two types of tasks, A and B, which need to be separated by 3 intervals. This leads to idling twice between repetitions of these tasks.",
+    "constraints": "**Constraints:**\n\n\t- `1 <= tasks.length <= 104`\n\t- `tasks[i]` is an uppercase English letter.\n\t- `0 <= n <= 100`",
+    "solution_code": "class Solution:\n    def leastInterval(self, tasks: List[str], n: int) -> int:\n        cnt = Counter(tasks)\n        x = max(cnt.values())\n        s = sum(v == x for v in cnt.values())\n        return max(len(tasks), (x - 1) * (n + 1) + s)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Task Scheduler, apply General to satisfy target complexity",
+      "For Task Scheduler, brute-force all candidate combinations",
+      "For Task Scheduler, repeatedly sort intermediate states",
+      "For Task Scheduler, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0600-0699/0621.Task Scheduler"
+  },
+  {
+    "id": "452",
+    "title": "Minimum Number of Arrows to Burst Balloons",
+    "content": "There are some spherical balloons taped onto a flat wall that represents the XY-plane. The balloons are represented as a 2D integer array `points` where `points[i] = [xstart, xend]` denotes a balloon whose **horizontal diameter** stretches between `xstart` and `xend`. You do not know the exact y-coordinates of the balloons.\n\nArrows can be shot up **directly vertically** (in the positive y-direction) from different points along the x-axis. A balloon with `xstart` and `xend` is **burst** by an arrow shot at `x` if `xstart <= x <= xend`. There is **no limit** to the number of arrows that can be shot. A shot arrow keeps traveling up infinitely, bursting any balloons in its path.\n\nGiven the array `points`, return *the **minimum** number of arrows that must be shot to burst all balloons*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** points = [[10,16],[2,8],[1,6],[7,12]]\n**Output:** 2\n**Explanation:** The balloons can be burst by 2 arrows:\n- Shoot an arrow at x = 6, bursting the balloons [2,8] and [1,6].\n- Shoot an arrow at x = 11, bursting the balloons [10,16] and [7,12].\n```\n\n**Example 2:**\n\n```\n**Input:** points = [[1,2],[3,4],[5,6],[7,8]]\n**Output:** 4\n**Explanation:** One arrow needs to be shot for each balloon for a total of 4 arrows.\n```\n\n**Example 3:**\n\n```\n**Input:** points = [[1,2],[2,3],[3,4],[4,5]]\n**Output:** 2\n**Explanation:** The balloons can be burst by 2 arrows:\n- Shoot an arrow at x = 2, bursting the balloons [1,2] and [2,3].\n- Shoot an arrow at x = 4, bursting the balloons [3,4] and [4,5].\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= points.length <= 105`\n\t- `points[i].length == 2`\n\t- `-231 <= xstart < xend <= 231 - 1`",
+    "solution_code": "class Solution:\n    def findMinArrowShots(self, points: List[List[int]]) -> int:\n        ans, last = 0, -inf\n        for a, b in sorted(points, key=lambda x: x[1]):\n            if a > last:\n                ans += 1\n                last = b\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Minimum Number of Arrows to Burst Balloons, apply General to satisfy target complexity",
+      "For Minimum Number of Arrows to Burst Balloons, brute-force all candidate combinations",
+      "For Minimum Number of Arrows to Burst Balloons, repeatedly sort intermediate states",
+      "For Minimum Number of Arrows to Burst Balloons, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0400-0499/0452.Minimum Number of Arrows to Burst Balloons"
+  },
+  {
+    "id": "153",
+    "title": "Find Minimum in Rotated Sorted Array",
+    "content": "Suppose an array of length `n` sorted in ascending order is **rotated** between `1` and `n` times. For example, the array `nums = [0,1,2,4,5,6,7]` might become:\n\n\t- `[4,5,6,7,0,1,2]` if it was rotated `4` times.\n\t- `[0,1,2,4,5,6,7]` if it was rotated `7` times.\n\nNotice that **rotating** an array `[a[0], a[1], a[2], ..., a[n-1]]` 1 time results in the array `[a[n-1], a[0], a[1], a[2], ..., a[n-2]]`.\n\nGiven the sorted rotated array `nums` of **unique** elements, return *the minimum element of this array*.\n\nYou must write an algorithm that runs in `O(log n) time`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [3,4,5,1,2]\n**Output:** 1\n**Explanation:** The original array was [1,2,3,4,5] rotated 3 times.\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [4,5,6,7,0,1,2]\n**Output:** 0\n**Explanation:** The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.\n```\n\n**Example 3:**\n\n```\n**Input:** nums = [11,13,15,17]\n**Output:** 11\n**Explanation:** The original array was [11,13,15,17] and it was rotated 4 times.\n```",
+    "constraints": "**Constraints:**\n\n\t- `n == nums.length`\n\t- `1 <= n <= 5000`\n\t- `-5000 <= nums[i] <= 5000`\n\t- All the integers of `nums` are **unique**.\n\t- `nums` is sorted and rotated between `1` and `n` times.",
+    "solution_code": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        if nums[0] <= nums[-1]:\n            return nums[0]\n        left, right = 0, len(nums) - 1\n        while left < right:\n            mid = (left + right) >> 1\n            if nums[0] <= nums[mid]:\n                left = mid + 1\n            else:\n                right = mid\n        return nums[left]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Find Minimum in Rotated Sorted Array, apply General to satisfy target complexity",
+      "For Find Minimum in Rotated Sorted Array, brute-force all candidate combinations",
+      "For Find Minimum in Rotated Sorted Array, repeatedly sort intermediate states",
+      "For Find Minimum in Rotated Sorted Array, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0153.Find Minimum in Rotated Sorted Array"
+  },
+  {
+    "id": "33",
+    "title": "Search in Rotated Sorted Array",
+    "content": "There is an integer array `nums` sorted in ascending order (with **distinct** values).\n\nPrior to being passed to your function, `nums` is **possibly left rotated** at an unknown index `k` (`1 <= k < nums.length`) such that the resulting array is `[nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]]` (**0-indexed**). For example, `[0,1,2,4,5,6,7]` might be left rotated by `3` indices and become `[4,5,6,7,0,1,2]`.\n\nGiven the array `nums` **after** the possible rotation and an integer `target`, return *the index of *`target`* if it is in *`nums`*, or *`-1`* if it is not in *`nums`.\n\nYou must write an algorithm with `O(log n)` runtime complexity.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [4,5,6,7,0,1,2], target = 0\n**Output:** 4\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [4,5,6,7,0,1,2], target = 3\n**Output:** -1\n```\n\n**Example 3:**\n\n```\n**Input:** nums = [1], target = 0\n**Output:** -1\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= nums.length <= 5000`\n\t- `-104 <= nums[i] <= 104`\n\t- All values of `nums` are **unique**.\n\t- `nums` is an ascending array that is possibly rotated.\n\t- `-104 <= target <= 104`",
+    "solution_code": "class Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        n = len(nums)\n        left, right = 0, n - 1\n        while left < right:\n            mid = (left + right) >> 1\n            if nums[0] <= nums[mid]:\n                if nums[0] <= target <= nums[mid]:\n                    right = mid\n                else:\n                    left = mid + 1\n            else:\n                if nums[mid] < target <= nums[n - 1]:\n                    left = mid + 1\n                else:\n                    right = mid\n        return left if nums[left] == target else -1\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Search in Rotated Sorted Array, apply General to satisfy target complexity",
+      "For Search in Rotated Sorted Array, brute-force all candidate combinations",
+      "For Search in Rotated Sorted Array, repeatedly sort intermediate states",
+      "For Search in Rotated Sorted Array, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0033.Search in Rotated Sorted Array"
+  },
+  {
+    "id": "34",
+    "title": "Find First and Last Position of Element in Sorted Array",
+    "content": "Given an array of integers `nums` sorted in non-decreasing order, find the starting and ending position of a given `target` value.\n\nIf `target` is not found in the array, return `[-1, -1]`.\n\nYou must write an algorithm with `O(log n)` runtime complexity.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [5,7,7,8,8,10], target = 8\n**Output:** [3,4]\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [5,7,7,8,8,10], target = 6\n**Output:** [-1,-1]\n```\n\n**Example 3:**\n\n```\n**Input:** nums = [], target = 0\n**Output:** [-1,-1]\n```",
+    "constraints": "**Constraints:**\n\n\t- `0 <= nums.length <= 105`\n\t- `-109 <= nums[i] <= 109`\n\t- `nums` is a non-decreasing array.\n\t- `-109 <= target <= 109`",
+    "solution_code": "class Solution:\n    def searchRange(self, nums: List[int], target: int) -> List[int]:\n        l = bisect_left(nums, target)\n        r = bisect_left(nums, target + 1)\n        return [-1, -1] if l == r else [l, r - 1]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Find First and Last Position of Element in Sorted Array, apply General to satisfy target complexity",
+      "For Find First and Last Position of Element in Sorted Array, brute-force all candidate combinations",
+      "For Find First and Last Position of Element in Sorted Array, repeatedly sort intermediate states",
+      "For Find First and Last Position of Element in Sorted Array, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0034.Find First and Last Position of Element in Sorted Array"
+  },
+  {
+    "id": "74",
+    "title": "Search a 2D Matrix",
+    "content": "You are given an `m x n` integer matrix `matrix` with the following two properties:\n\n\t- Each row is sorted in non-decreasing order.\n\t- The first integer of each row is greater than the last integer of the previous row.\n\nGiven an integer `target`, return `true` *if* `target` *is in* `matrix` *or* `false` *otherwise*.\n\nYou must write a solution in `O(log(m * n))` time complexity.",
+    "examples": "**Example 1:**\n\n```\n**Input:** matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3\n**Output:** true\n```\n\n**Example 2:**\n\n```\n**Input:** matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13\n**Output:** false\n```",
+    "constraints": "**Constraints:**\n\n\t- `m == matrix.length`\n\t- `n == matrix[i].length`\n\t- `1 <= m, n <= 100`\n\t- `-104 <= matrix[i][j], target <= 104`",
+    "solution_code": "class Solution:\n    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:\n        m, n = len(matrix), len(matrix[0])\n        left, right = 0, m * n - 1\n        while left < right:\n            mid = (left + right) >> 1\n            x, y = divmod(mid, n)\n            if matrix[x][y] >= target:\n                right = mid\n            else:\n                left = mid + 1\n        return matrix[left // n][left % n] == target\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Search a 2D Matrix, apply General to satisfy target complexity",
+      "For Search a 2D Matrix, brute-force all candidate combinations",
+      "For Search a 2D Matrix, repeatedly sort intermediate states",
+      "For Search a 2D Matrix, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0074.Search a 2D Matrix"
+  },
+  {
+    "id": "875",
+    "title": "Koko Eating Bananas",
+    "content": "Koko loves to eat bananas. There are `n` piles of bananas, the `ith` pile has `piles[i]` bananas. The guards have gone and will come back in `h` hours.\n\nKoko can decide her bananas-per-hour eating speed of `k`. Each hour, she chooses some pile of bananas and eats `k` bananas from that pile. If the pile has less than `k` bananas, she eats all of them instead and will not eat any more bananas during this hour.\n\nKoko likes to eat slowly but still wants to finish eating all the bananas before the guards return.\n\nReturn *the minimum integer* `k` *such that she can eat all the bananas within* `h` *hours*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** piles = [3,6,7,11], h = 8\n**Output:** 4\n```\n\n**Example 2:**\n\n```\n**Input:** piles = [30,11,23,4,20], h = 5\n**Output:** 30\n```\n\n**Example 3:**\n\n```\n**Input:** piles = [30,11,23,4,20], h = 6\n**Output:** 23\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= piles.length <= 104`\n\t- `piles.length <= h <= 109`\n\t- `1 <= piles[i] <= 109`",
+    "solution_code": "class Solution:\n    def minEatingSpeed(self, piles: List[int], h: int) -> int:\n        def check(k: int) -> bool:\n            return sum((x + k - 1) // k for x in piles) <= h\n\n        return 1 + bisect_left(range(1, max(piles) + 1), True, key=check)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Koko Eating Bananas, apply General to satisfy target complexity",
+      "For Koko Eating Bananas, brute-force all candidate combinations",
+      "For Koko Eating Bananas, repeatedly sort intermediate states",
+      "For Koko Eating Bananas, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0800-0899/0875.Koko Eating Bananas"
+  },
+  {
+    "id": "4",
+    "title": "Median of Two Sorted Arrays",
+    "content": "Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return **the median** of the two sorted arrays.\n\nThe overall run time complexity should be `O(log (m+n))`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums1 = [1,3], nums2 = [2]\n**Output:** 2.00000\n**Explanation:** merged array = [1,2,3] and median is 2.\n```\n\n**Example 2:**\n\n```\n**Input:** nums1 = [1,2], nums2 = [3,4]\n**Output:** 2.50000\n**Explanation:** merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.\n```",
+    "constraints": "**Constraints:**\n\n\t- `nums1.length == m`\n\t- `nums2.length == n`\n\t- `0 <= m <= 1000`\n\t- `0 <= n <= 1000`\n\t- `1 <= m + n <= 2000`\n\t- `-106 <= nums1[i], nums2[i] <= 106`",
+    "solution_code": "class Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        def f(i: int, j: int, k: int) -> int:\n            if i >= m:\n                return nums2[j + k - 1]\n            if j >= n:\n                return nums1[i + k - 1]\n            if k == 1:\n                return min(nums1[i], nums2[j])\n            p = k // 2\n            x = nums1[i + p - 1] if i + p - 1 < m else inf\n            y = nums2[j + p - 1] if j + p - 1 < n else inf\n            return f(i + p, j, k - p) if x < y else f(i, j + p, k - p)\n\n        m, n = len(nums1), len(nums2)\n        a = f(0, 0, (m + n + 1) // 2)\n        b = f(0, 0, (m + n + 2) // 2)\n        return (a + b) / 2\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Median of Two Sorted Arrays, apply General to satisfy target complexity",
+      "For Median of Two Sorted Arrays, brute-force all candidate combinations",
+      "For Median of Two Sorted Arrays, repeatedly sort intermediate states",
+      "For Median of Two Sorted Arrays, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0004.Median of Two Sorted Arrays"
+  },
+  {
+    "id": "2080",
+    "title": "Range Frequency Queries",
+    "content": "Design a data structure to find the **frequency** of a given value in a given subarray.\n\nThe **frequency** of a value in a subarray is the number of occurrences of that value in the subarray.\n\nImplement the `RangeFreqQuery` class:\n\n\t- `RangeFreqQuery(int[] arr)` Constructs an instance of the class with the given **0-indexed** integer array `arr`.\n\t- `int query(int left, int right, int value)` Returns the **frequency** of `value` in the subarray `arr[left...right]`.\n\nA **subarray** is a contiguous sequence of elements within an array. `arr[left...right]` denotes the subarray that contains the elements of `nums` between indices `left` and `right` (**inclusive**).",
+    "examples": "**Example 1:**\n\n```\n**Input**\n[\"RangeFreqQuery\", \"query\", \"query\"]\n[[[12, 33, 4, 56, 22, 2, 34, 33, 22, 12, 34, 56]], [1, 2, 4], [0, 11, 33]]\n**Output**\n[null, 1, 2]\n\n**Explanation**\nRangeFreqQuery rangeFreqQuery = new RangeFreqQuery([12, 33, 4, 56, 22, 2, 34, 33, 22, 12, 34, 56]);\nrangeFreqQuery.query(1, 2, 4); // return 1. The value 4 occurs 1 time in the subarray [33, 4]\nrangeFreqQuery.query(0, 11, 33); // return 2. The value 33 occurs 2 times in the whole array.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= arr.length <= 105`\n\t- `1 <= arr[i], value <= 104`\n\t- `0 <= left <= right < arr.length`\n\t- At most `105` calls will be made to `query`",
+    "solution_code": "class RangeFreqQuery:\n\n    def __init__(self, arr: List[int]):\n        self.g = defaultdict(list)\n        for i, x in enumerate(arr):\n            self.g[x].append(i)\n\n    def query(self, left: int, right: int, value: int) -> int:\n        idx = self.g[value]\n        l = bisect_left(idx, left)\n        r = bisect_left(idx, right + 1)\n        return r - l\n\n\n# Your RangeFreqQuery object will be instantiated and called as such:\n# obj = RangeFreqQuery(arr)\n# param_1 = obj.query(left,right,value)\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Range Frequency Queries, apply General to satisfy target complexity",
+      "For Range Frequency Queries, brute-force all candidate combinations",
+      "For Range Frequency Queries, repeatedly sort intermediate states",
+      "For Range Frequency Queries, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "2000-2099/2080.Range Frequency Queries"
+  },
+  {
+    "id": "11",
+    "title": "Container With Most Water",
+    "content": "You are given an integer array `height` of length `n`. There are `n` vertical lines drawn such that the two endpoints of the `ith` line are `(i, 0)` and `(i, height[i])`.\n\nFind two lines that together with the x-axis form a container, such that the container contains the most water.\n\nReturn *the maximum amount of water a container can store*.\n\n**Notice** that you may not slant the container.",
+    "examples": "**Example 1:**\n\n```\n**Input:** height = [1,8,6,2,5,4,8,3,7]\n**Output:** 49\n**Explanation:** The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7]. In this case, the max area of water (blue section) the container can contain is 49.\n```\n\n**Example 2:**\n\n```\n**Input:** height = [1,1]\n**Output:** 1\n```",
+    "constraints": "**Constraints:**\n\n\t- `n == height.length`\n\t- `2 <= n <= 105`\n\t- `0 <= height[i] <= 104`",
+    "solution_code": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        l, r = 0, len(height) - 1\n        ans = 0\n        while l < r:\n            t = min(height[l], height[r]) * (r - l)\n            ans = max(ans, t)\n            if height[l] < height[r]:\n                l += 1\n            else:\n                r -= 1\n        return ans\n",
+    "primary_pattern": "Two Pointers",
+    "all_patterns": [
+      "Array",
+      "Greedy",
+      "Two Pointers"
+    ],
+    "mcq_options": [
+      "For Container With Most Water, apply Two Pointers to satisfy target complexity",
+      "For Container With Most Water, brute-force all candidate combinations",
+      "For Container With Most Water, repeatedly sort intermediate states",
+      "For Container With Most Water, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "two",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0011.Container With Most Water"
+  },
+  {
+    "id": "42",
+    "title": "Trapping Rain Water",
+    "content": "Given `n` non-negative integers representing an elevation map where the width of each bar is `1`, compute how much water it can trap after raining.",
+    "examples": "**Example 1:**\n\n```\n**Input:** height = [0,1,0,2,1,0,1,3,2,1,2,1]\n**Output:** 6\n**Explanation:** The above elevation map (black section) is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In this case, 6 units of rain water (blue section) are being trapped.\n```\n\n**Example 2:**\n\n```\n**Input:** height = [4,2,0,3,2,5]\n**Output:** 9\n```",
+    "constraints": "**Constraints:**\n\n\t- `n == height.length`\n\t- `1 <= n <= 2 * 104`\n\t- `0 <= height[i] <= 105`",
+    "solution_code": "class Solution:\n    def trap(self, height: List[int]) -> int:\n        n = len(height)\n        left = [height[0]] * n\n        right = [height[-1]] * n\n        for i in range(1, n):\n            left[i] = max(left[i - 1], height[i])\n            right[n - i - 1] = max(right[n - i], height[n - i - 1])\n        return sum(min(l, r) - h for l, r, h in zip(left, right, height))\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Trapping Rain Water, apply General to satisfy target complexity",
+      "For Trapping Rain Water, brute-force all candidate combinations",
+      "For Trapping Rain Water, repeatedly sort intermediate states",
+      "For Trapping Rain Water, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0042.Trapping Rain Water"
+  },
+  {
+    "id": "84",
+    "title": "Largest Rectangle in Histogram",
+    "content": "Given an array of integers `heights` representing the histogram's bar height where the width of each bar is `1`, return *the area of the largest rectangle in the histogram*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** heights = [2,1,5,6,2,3]\n**Output:** 10\n**Explanation:** The above is a histogram where width of each bar is 1.\nThe largest rectangle is shown in the red area, which has an area = 10 units.\n```\n\n**Example 2:**\n\n```\n**Input:** heights = [2,4]\n**Output:** 4\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= heights.length <= 105`\n\t- `0 <= heights[i] <= 104`",
+    "solution_code": "class Solution:\n    def largestRectangleArea(self, heights: List[int]) -> int:\n        n = len(heights)\n        stk = []\n        left = [-1] * n\n        right = [n] * n\n        for i, h in enumerate(heights):\n            while stk and heights[stk[-1]] >= h:\n                right[stk[-1]] = i\n                stk.pop()\n            if stk:\n                left[i] = stk[-1]\n            stk.append(i)\n        return max(h * (right[i] - left[i] - 1) for i, h in enumerate(heights))\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Largest Rectangle in Histogram, apply General to satisfy target complexity",
+      "For Largest Rectangle in Histogram, brute-force all candidate combinations",
+      "For Largest Rectangle in Histogram, repeatedly sort intermediate states",
+      "For Largest Rectangle in Histogram, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0000-0099/0084.Largest Rectangle in Histogram"
+  },
+  {
+    "id": "1249",
+    "title": "Minimum Remove to Make Valid Parentheses",
+    "content": "Given a string s of `'('` , `')'` and lowercase English characters.\n\nYour task is to remove the minimum number of parentheses ( `'('` or `')'`, in any positions ) so that the resulting *parentheses string* is valid and return **any** valid string.\n\nFormally, a *parentheses string* is valid if and only if:\n\n\t- It is the empty string, contains only lowercase characters, or\n\t- It can be written as `AB` (`A` concatenated with `B`), where `A` and `B` are valid strings, or\n\t- It can be written as `(A)`, where `A` is a valid string.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"lee(t(c)o)de)\"\n**Output:** \"lee(t(c)o)de\"\n**Explanation:** \"lee(t(co)de)\" , \"lee(t(c)ode)\" would also be accepted.\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"a)b(c)d\"\n**Output:** \"ab(c)d\"\n```\n\n**Example 3:**\n\n```\n**Input:** s = \"))((\"\n**Output:** \"\"\n**Explanation:** An empty string is also valid.\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 105`\n\t- `s[i]` is either `'('` , `')'`, or lowercase English letter.",
+    "solution_code": "class Solution:\n    def minRemoveToMakeValid(self, s: str) -> str:\n        stk = []\n        x = 0\n        for c in s:\n            if c == ')' and x == 0:\n                continue\n            if c == '(':\n                x += 1\n            elif c == ')':\n                x -= 1\n            stk.append(c)\n        x = 0\n        ans = []\n        for c in stk[::-1]:\n            if c == '(' and x == 0:\n                continue\n            if c == ')':\n                x += 1\n            elif c == '(':\n                x -= 1\n            ans.append(c)\n        return ''.join(ans[::-1])\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Minimum Remove to Make Valid Parentheses, apply General to satisfy target complexity",
+      "For Minimum Remove to Make Valid Parentheses, brute-force all candidate combinations",
+      "For Minimum Remove to Make Valid Parentheses, repeatedly sort intermediate states",
+      "For Minimum Remove to Make Valid Parentheses, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "1200-1299/1249.Minimum Remove to Make Valid Parentheses"
+  },
+  {
+    "id": "678",
+    "title": "Valid Parenthesis String",
+    "content": "Given a string `s` containing only three types of characters: `'('`, `')'` and `'*'`, return `true` *if* `s` *is **valid***.\n\nThe following rules define a **valid** string:\n\n\t- Any left parenthesis `'('` must have a corresponding right parenthesis `')'`.\n\t- Any right parenthesis `')'` must have a corresponding left parenthesis `'('`.\n\t- Left parenthesis `'('` must go before the corresponding right parenthesis `')'`.\n\t- `'*'` could be treated as a single right parenthesis `')'` or a single left parenthesis `'('` or an empty string `\"\"`.",
+    "examples": "**Example 1:**\n\n```\n**Input:** s = \"()\"\n**Output:** true\n```\n\n**Example 2:**\n\n```\n**Input:** s = \"(*)\"\n**Output:** true\n```\n\n**Example 3:**\n\n```\n**Input:** s = \"(*))\"\n**Output:** true\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= s.length <= 100`\n\t- `s[i]` is `'('`, `')'` or `'*'`.",
+    "solution_code": "class Solution:\n    def checkValidString(self, s: str) -> bool:\n        n = len(s)\n        dp = [[False] * n for _ in range(n)]\n        for i, c in enumerate(s):\n            dp[i][i] = c == '*'\n        for i in range(n - 2, -1, -1):\n            for j in range(i + 1, n):\n                dp[i][j] = (\n                    s[i] in '(*' and s[j] in '*)' and (i + 1 == j or dp[i + 1][j - 1])\n                )\n                dp[i][j] = dp[i][j] or any(\n                    dp[i][k] and dp[k + 1][j] for k in range(i, j)\n                )\n        return dp[0][-1]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Valid Parenthesis String, apply General to satisfy target complexity",
+      "For Valid Parenthesis String, brute-force all candidate combinations",
+      "For Valid Parenthesis String, repeatedly sort intermediate states",
+      "For Valid Parenthesis String, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0600-0699/0678.Valid Parenthesis String"
+  },
+  {
+    "id": "150",
+    "title": "Evaluate Reverse Polish Notation",
+    "content": "You are given an array of strings `tokens` that represents an arithmetic expression in a Reverse Polish Notation.\n\nEvaluate the expression. Return *an integer that represents the value of the expression*.\n\n**Note** that:\n\n\t- The valid operators are `'+'`, `'-'`, `'*'`, and `'/'`.\n\t- Each operand may be an integer or another expression.\n\t- The division between two integers always **truncates toward zero**.\n\t- There will not be any division by zero.\n\t- The input represents a valid arithmetic expression in a reverse polish notation.\n\t- The answer and all the intermediate calculations can be represented in a **32-bit** integer.",
+    "examples": "**Example 1:**\n\n```\n**Input:** tokens = [\"2\",\"1\",\"+\",\"3\",\"*\"]\n**Output:** 9\n**Explanation:** ((2 + 1) * 3) = 9\n```\n\n**Example 2:**\n\n```\n**Input:** tokens = [\"4\",\"13\",\"5\",\"/\",\"+\"]\n**Output:** 6\n**Explanation:** (4 + (13 / 5)) = 6\n```\n\n**Example 3:**\n\n```\n**Input:** tokens = [\"10\",\"6\",\"9\",\"3\",\"+\",\"-11\",\"*\",\"/\",\"*\",\"17\",\"+\",\"5\",\"+\"]\n**Output:** 22\n**Explanation:** ((10 * (6 / ((9 + 3) * -11))) + 17) + 5\n= ((10 * (6 / (12 * -11))) + 17) + 5\n= ((10 * (6 / -132)) + 17) + 5\n= ((10 * 0) + 17) + 5\n= (0 + 17) + 5\n= 17 + 5\n= 22\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= tokens.length <= 104`\n\t- `tokens[i]` is either an operator: `\"+\"`, `\"-\"`, `\"*\"`, or `\"/\"`, or an integer in the range `[-200, 200]`.",
+    "solution_code": "import operator\n\n\nclass Solution:\n    def evalRPN(self, tokens: List[str]) -> int:\n        opt = {\n            \"+\": operator.add,\n            \"-\": operator.sub,\n            \"*\": operator.mul,\n            \"/\": operator.truediv,\n        }\n        s = []\n        for token in tokens:\n            if token in opt:\n                s.append(int(opt[token](s.pop(-2), s.pop(-1))))\n            else:\n                s.append(int(token))\n        return s[0]\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Evaluate Reverse Polish Notation, apply General to satisfy target complexity",
+      "For Evaluate Reverse Polish Notation, brute-force all candidate combinations",
+      "For Evaluate Reverse Polish Notation, repeatedly sort intermediate states",
+      "For Evaluate Reverse Polish Notation, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0150.Evaluate Reverse Polish Notation"
+  },
+  {
+    "id": "155",
+    "title": "Min Stack",
+    "content": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.\n\nImplement the `MinStack` class:\n\n\t- `MinStack()` initializes the stack object.\n\t- `void push(int val)` pushes the element `val` onto the stack.\n\t- `void pop()` removes the element on the top of the stack.\n\t- `int top()` gets the top element of the stack.\n\t- `int getMin()` retrieves the minimum element in the stack.\n\nYou must implement a solution with `O(1)` time complexity for each function.",
+    "examples": "**Example 1:**\n\n```\n**Input**\n[\"MinStack\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"top\",\"getMin\"]\n[[],[-2],[0],[-3],[],[],[],[]]\n\n**Output**\n[null,null,null,null,-3,null,0,-2]\n\n**Explanation**\nMinStack minStack = new MinStack();\nminStack.push(-2);\nminStack.push(0);\nminStack.push(-3);\nminStack.getMin(); // return -3\nminStack.pop();\nminStack.top();    // return 0\nminStack.getMin(); // return -2\n```",
+    "constraints": "**Constraints:**\n\n\t- `-231 <= val <= 231 - 1`\n\t- Methods `pop`, `top` and `getMin` operations will always be called on **non-empty** stacks.\n\t- At most `3 * 104` calls will be made to `push`, `pop`, `top`, and `getMin`.",
+    "solution_code": "class MinStack:\n    def __init__(self):\n        self.stk1 = []\n        self.stk2 = [inf]\n\n    def push(self, val: int) -> None:\n        self.stk1.append(val)\n        self.stk2.append(min(val, self.stk2[-1]))\n\n    def pop(self) -> None:\n        self.stk1.pop()\n        self.stk2.pop()\n\n    def top(self) -> int:\n        return self.stk1[-1]\n\n    def getMin(self) -> int:\n        return self.stk2[-1]\n\n\n# Your MinStack object will be instantiated and called as such:\n# obj = MinStack()\n# obj.push(val)\n# obj.pop()\n# param_3 = obj.top()\n# param_4 = obj.getMin()\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Min Stack, apply General to satisfy target complexity",
+      "For Min Stack, brute-force all candidate combinations",
+      "For Min Stack, repeatedly sort intermediate states",
+      "For Min Stack, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0100-0199/0155.Min Stack"
+  },
+  {
+    "id": "232",
+    "title": "Implement Queue using Stacks",
+    "content": "Implement a first in first out (FIFO) queue using only two stacks. The implemented queue should support all the functions of a normal queue (`push`, `peek`, `pop`, and `empty`).\n\nImplement the `MyQueue` class:\n\n\t- `void push(int x)` Pushes element x to the back of the queue.\n\t- `int pop()` Removes the element from the front of the queue and returns it.\n\t- `int peek()` Returns the element at the front of the queue.\n\t- `boolean empty()` Returns `true` if the queue is empty, `false` otherwise.\n\n**Notes:**\n\n\t- You must use **only** standard operations of a stack, which means only `push to top`, `peek/pop from top`, `size`, and `is empty` operations are valid.\n\t- Depending on your language, the stack may not be supported natively. You may simulate a stack using a list or deque (double-ended queue) as long as you use only a stack's standard operations.",
+    "examples": "**Example 1:**\n\n```\n**Input**\n[\"MyQueue\", \"push\", \"push\", \"peek\", \"pop\", \"empty\"]\n[[], [1], [2], [], [], []]\n**Output**\n[null, null, null, 1, 1, false]\n\n**Explanation**\nMyQueue myQueue = new MyQueue();\nmyQueue.push(1); // queue is: [1]\nmyQueue.push(2); // queue is: [1, 2] (leftmost is front of the queue)\nmyQueue.peek(); // return 1\nmyQueue.pop(); // return 1, queue is [2]\nmyQueue.empty(); // return false\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= x <= 9`\n\t- At most `100` calls will be made to `push`, `pop`, `peek`, and `empty`.\n\t- All the calls to `pop` and `peek` are valid.\n\n \n\n**Follow-up:** Can you implement the queue such that each operation is **amortized** `O(1)` time complexity? In other words, performing `n` operations will take overall `O(n)` time even if one of those operations may take longer.",
+    "solution_code": "class MyQueue:\n    def __init__(self):\n        self.stk1 = []\n        self.stk2 = []\n\n    def push(self, x: int) -> None:\n        self.stk1.append(x)\n\n    def pop(self) -> int:\n        self.move()\n        return self.stk2.pop()\n\n    def peek(self) -> int:\n        self.move()\n        return self.stk2[-1]\n\n    def empty(self) -> bool:\n        return not self.stk1 and not self.stk2\n\n    def move(self):\n        if not self.stk2:\n            while self.stk1:\n                self.stk2.append(self.stk1.pop())\n\n\n# Your MyQueue object will be instantiated and called as such:\n# obj = MyQueue()\n# obj.push(x)\n# param_2 = obj.pop()\n# param_3 = obj.peek()\n# param_4 = obj.empty()\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Implement Queue using Stacks, apply General to satisfy target complexity",
+      "For Implement Queue using Stacks, brute-force all candidate combinations",
+      "For Implement Queue using Stacks, repeatedly sort intermediate states",
+      "For Implement Queue using Stacks, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0232.Implement Queue using Stacks"
+  },
+  {
+    "id": "239",
+    "title": "Sliding Window Maximum",
+    "content": "You are given an array of integers `nums`, there is a sliding window of size `k` which is moving from the very left of the array to the very right. You can only see the `k` numbers in the window. Each time the sliding window moves right by one position.\n\nReturn *the max sliding window*.",
+    "examples": "**Example 1:**\n\n```\n**Input:** nums = [1,3,-1,-3,5,3,6,7], k = 3\n**Output:** [3,3,5,5,6,7]\n**Explanation:** \nWindow position                Max\n---------------               -----\n[1  3  -1] -3  5  3  6  7       **3**\n 1 [3  -1  -3] 5  3  6  7       **3**\n 1  3 [-1  -3  5] 3  6  7      ** 5**\n 1  3  -1 [-3  5  3] 6  7       **5**\n 1  3  -1  -3 [5  3  6] 7       **6**\n 1  3  -1  -3  5 [3  6  7]      **7**\n```\n\n**Example 2:**\n\n```\n**Input:** nums = [1], k = 1\n**Output:** [1]\n```",
+    "constraints": "**Constraints:**\n\n\t- `1 <= nums.length <= 105`\n\t- `-104 <= nums[i] <= 104`\n\t- `1 <= k <= nums.length`",
+    "solution_code": "class Solution:\n    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:\n        q = [(-v, i) for i, v in enumerate(nums[: k - 1])]\n        heapify(q)\n        ans = []\n        for i in range(k - 1, len(nums)):\n            heappush(q, (-nums[i], i))\n            while q[0][1] <= i - k:\n                heappop(q)\n            ans.append(-q[0][0])\n        return ans\n",
+    "primary_pattern": "General",
+    "all_patterns": [
+      "General"
+    ],
+    "mcq_options": [
+      "For Sliding Window Maximum, apply General to satisfy target complexity",
+      "For Sliding Window Maximum, brute-force all candidate combinations",
+      "For Sliding Window Maximum, repeatedly sort intermediate states",
+      "For Sliding Window Maximum, use shortest path graph algorithm"
+    ],
+    "correct_idx": 0,
+    "followup_keywords": [
+      "general",
+      "complexity bound",
+      "edge cases"
+    ],
+    "source_dir": "0200-0299/0239.Sliding Window Maximum"
+  }
+]

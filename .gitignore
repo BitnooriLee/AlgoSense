@@ -9,3 +9,7 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+#github data
+leetcode/
+leetcode.db
