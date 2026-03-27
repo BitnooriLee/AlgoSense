@@ -48,6 +48,9 @@ def create_tables(conn: sqlite3.Connection) -> None:
             content TEXT,
             examples TEXT,
             constraints TEXT,
+            time_complexity TEXT,
+            space_complexity TEXT,
+            complexity_explanation TEXT,
             mcq_options TEXT,
             correct_idx INTEGER,
             snippet TEXT,
@@ -83,7 +86,14 @@ def create_tables(conn: sqlite3.Connection) -> None:
 def _migrate_problem_columns(conn: sqlite3.Connection) -> None:
     """Ensure text columns exist when DB was created with old schema."""
     cols = {row["name"] for row in conn.execute("PRAGMA table_info(problems);").fetchall()}
-    for col in ("content", "examples", "constraints"):
+    for col in (
+        "content",
+        "examples",
+        "constraints",
+        "time_complexity",
+        "space_complexity",
+        "complexity_explanation",
+    ):
         if col not in cols:
             conn.execute(f"ALTER TABLE problems ADD COLUMN {col} TEXT;")
 
@@ -112,6 +122,9 @@ def seed_problem_placeholders(conn: sqlite3.Connection, total: int = MAX_PROBLEM
                 "",
                 "",
                 "",
+                "",
+                "",
+                "",
                 json.dumps(["Option A", "Option B", "Option C", "Option D"]),
                 0,
                 "def solve(): pass",
@@ -122,8 +135,8 @@ def seed_problem_placeholders(conn: sqlite3.Connection, total: int = MAX_PROBLEM
     conn.executemany(
         """
         INSERT INTO problems
-        (id, title, pattern, difficulty, content, examples, constraints, mcq_options, correct_idx, snippet, followup_keywords)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        (id, title, pattern, difficulty, content, examples, constraints, time_complexity, space_complexity, complexity_explanation, mcq_options, correct_idx, snippet, followup_keywords)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """,
         rows,
     )
@@ -147,12 +160,12 @@ def upsert_user_skill(conn: sqlite3.Connection, user_id: str, tag: str, skill_sc
 
 
 def bulk_insert_problems(conn: sqlite3.Connection, rows: Iterable[tuple[Any, ...]]) -> None:
-    """Bulk upsert problems. Tuple: id,title,pattern,difficulty,content,examples,constraints,mcq_options,correct_idx,snippet,followup_keywords."""
+    """Bulk upsert problems. Tuple: id,title,pattern,difficulty,content,examples,constraints,time_complexity,space_complexity,complexity_explanation,mcq_options,correct_idx,snippet,followup_keywords."""
     conn.executemany(
         """
         INSERT INTO problems
-        (id, title, pattern, difficulty, content, examples, constraints, mcq_options, correct_idx, snippet, followup_keywords)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id, title, pattern, difficulty, content, examples, constraints, time_complexity, space_complexity, complexity_explanation, mcq_options, correct_idx, snippet, followup_keywords)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
             title = excluded.title,
             pattern = excluded.pattern,
@@ -160,6 +173,9 @@ def bulk_insert_problems(conn: sqlite3.Connection, rows: Iterable[tuple[Any, ...
             content = excluded.content,
             examples = excluded.examples,
             constraints = excluded.constraints,
+            time_complexity = excluded.time_complexity,
+            space_complexity = excluded.space_complexity,
+            complexity_explanation = excluded.complexity_explanation,
             mcq_options = excluded.mcq_options,
             correct_idx = excluded.correct_idx,
             snippet = excluded.snippet,
@@ -192,3 +208,11 @@ def initialize_database(
             seed_problem_placeholders(conn, total=placeholder_total)
     return Path(db_path)
 
+def add_indexes(db_path="data/leetcode.db"):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_problems_pattern ON problems(pattern);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_logs_user_date ON review_logs(user_id, next_review_date);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_stats_user_score ON user_stats(user_id, skill_score);")
+    conn.commit()
+    conn.close()
