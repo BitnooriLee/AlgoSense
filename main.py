@@ -153,7 +153,7 @@ with tab_quiz:
                 st.session_state.last_delta = delta
                 st.session_state.last_pattern = result.get("pattern", "")
                 st.session_state.submitted = True
-                st.success("Recorded." if is_correct else "Recorded as incorrect.")
+                st.success("Correct answer." if is_correct else "Wrong answer.")
                 sign = "+" if delta >= 0 else ""
                 st.toast(f"{sign}{delta} Skill Points!")
     else:
@@ -179,7 +179,7 @@ with tab_quiz:
                     st.session_state.last_delta = delta
                     st.session_state.last_pattern = result.get("pattern", "")
                     st.session_state.submitted = True
-                    st.success("Recorded." if is_correct else "Recorded as incorrect.")
+                    st.success("Correct answer." if is_correct else "Wrong answer.")
                     sign = "+" if delta >= 0 else ""
                     st.toast(f"{sign}{delta} Skill Points!")
     if st.session_state.get("submitted"):
@@ -190,9 +190,9 @@ with tab_quiz:
         sign = "+" if delta >= 0 else ""
         st.caption(f"Score update: {sign}{delta} on {pattern}")
 
-        show_answer = st.button("정답 보기", key=f"show_answer_{idx}")
+        show_answer = st.button("Show Answer", key=f"show_answer_{idx}")
         if show_answer:
-            st.markdown("### 정답")
+            st.markdown("### Answer")
             if st.session_state.current_mode == "Big-O Drill":
                 exp_time = card.get("time_complexity", "N/A")
                 exp_space = card.get("space_complexity", "N/A")
@@ -207,11 +207,11 @@ with tab_quiz:
                 options = card.get("mcq_options", [])
                 correct_idx = int(card.get("correct_idx", -1))
                 if 0 <= correct_idx < len(options):
-                    st.info(f"정답 선택지: **{options[correct_idx]}**")
+                    st.info(f"Correct Answer: **{options[correct_idx]}**")
                 else:
-                    st.info("정답 데이터가 없습니다.")
+                    st.info("No correct answer data.")
                 st.write(
-                    "설명: 문제의 핵심 패턴과 제약 조건을 만족하는 최적 접근(시간/공간)을 선택해야 합니다."
+                    "Explanation: The optimal approach should satisfy the core pattern and constraints of the problem."
                 )
 
         if st.button("Next Card", key=f"next_{idx}"):
