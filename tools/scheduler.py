@@ -51,8 +51,13 @@ def _rows_to_cards(rows: list[sqlite3.Row]) -> list[dict]:
     return cards
 
 
-def get_next_review_cards(user_id: str, limit: int = 10) -> list[dict]:
-    """Return next review cards by bucket priority: failures > stale > weak > fallback."""
+def get_next_review_cards(user_id: str, limit: int = 10, mode: str = "Pattern") -> list[dict]:
+    """Return next review cards by bucket priority.
+
+    Follow-up mode prioritises problems the user has already passed in Pattern/Big-O
+    mode (last_result = 'pass') so they have a solution context to discuss.
+    All other modes use the standard failure > stale > weak > fallback order.
+    """
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     _ensure_review_log_columns(conn)
@@ -70,6 +75,43 @@ def get_next_review_cards(user_id: str, limit: int = 10) -> list[dict]:
             selected_ids.add(pid)
             if len(cards) >= limit:
                 return
+
+    if mode == "Follow-up":
+        # Priority: problems already passed (last_result='pass'), ordered by most recently reviewed.
+        passed_rows = cursor.execute(
+            """
+            SELECT p.*
+            FROM review_logs rl
+            JOIN problems p ON p.id = rl.problem_id
+            WHERE rl.user_id = ? AND rl.last_result = 'pass'
+            ORDER BY datetime(COALESCE(rl.last_reviewed, '1970-01-01')) DESC
+            LIMIT ?;
+            """,
+            (user_id, limit),
+        ).fetchall()
+        extend(passed_rows)
+
+        # Fallback: any unsolved priority problems when not enough passed cards.
+        if len(cards) < limit:
+            placeholders = ", ".join(["?"] * len(PRIORITY_FALLBACK_IDS))
+            fallback_rows = cursor.execute(
+                f"""
+                SELECT p.*
+                FROM problems p
+                LEFT JOIN review_logs rl
+                  ON rl.problem_id = p.id AND rl.user_id = ?
+                WHERE p.id IN ({placeholders})
+                ORDER BY CAST(p.id AS INTEGER) ASC
+                LIMIT ?;
+                """,
+                (user_id, *PRIORITY_FALLBACK_IDS, limit),
+            ).fetchall()
+            extend(fallback_rows)
+
+        conn.close()
+        return _rows_to_cards(cards[:limit])
+
+    # ── Standard mode: failures > stale > weak > fallback ─────────────────────
 
     # Bucket 1: failures
     failed_rows = cursor.execute(

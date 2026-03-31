@@ -7,11 +7,12 @@ import operator
 
 
 class AgentState(TypedDict):
-    mode: str  # "Pattern", "Big-O", "Follow-up"
+    mode: str                  # "Pattern", "Big-O Drill", "Follow-up" — set by orchestrator
     user_id: str
-    current_problem: dict  # Selected from DB
-    user_response: str  # User's MCQ choice or Keyword
-    is_correct: bool  # Result of validation
-    feedback: str  # AI explanation
+    current_problem: dict      # Selected from DB
+    user_response: str         # User's MCQ choice or Keyword
+    is_correct: bool           # Result of validation
+    feedback: str              # AI explanation
+    auto_mode: bool            # True when mode was decided by orchestrator (not manually)
     steps_completed: Annotated[int, operator.add]  # Counter
 

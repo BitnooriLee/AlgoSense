@@ -104,8 +104,22 @@ def _get_llm_feedback_and_delta(
     expected_space: str = "",
     selected_time: str = "",
     selected_space: str = "",
+    followup_question: str = "",
+    correct_chip: str = "",
+    selected_chip: str = "",
 ) -> tuple[str, int]:
     result_text = "correct" if is_correct else "incorrect"
+
+    if mode == "Follow-up":
+        return _get_followup_feedback_and_delta(
+            title=title,
+            pattern=pattern,
+            is_correct=is_correct,
+            followup_question=followup_question,
+            correct_chip=correct_chip,
+            selected_chip=selected_chip,
+        )
+
     prompt = (
         "You are a strict interview coach. Return JSON only.\n"
         'Format: {"score_delta": <int>, "feedback": "<one sentence>"}\n'
@@ -145,6 +159,60 @@ def _get_llm_feedback_and_delta(
         return f"You slipped on {pattern}; write the invariant first and stop guessing.", default_delta
 
 
+def _get_followup_feedback_and_delta(
+    title: str,
+    pattern: str,
+    is_correct: bool,
+    followup_question: str,
+    correct_chip: str,
+    selected_chip: str,
+) -> tuple[str, int]:
+    """Generate interviewer-style one-sentence feedback for Follow-up mode."""
+    result_text = "correct" if is_correct else "incorrect"
+    default_delta = 20 if is_correct else -8
+
+    prompt = (
+        "You are a senior software engineer giving mock interview feedback. Return JSON only.\n"
+        'Format: {"score_delta": <int>, "feedback": "<one sentence>"}\n'
+        "Rules:\n"
+        "- If correct: give enthusiastic, specific praise about why the chosen keyword is right.\n"
+        "- If incorrect: explain in one sentence why the selected keyword doesn't address the follow-up, "
+        "and hint at the correct concept without revealing it directly.\n"
+        "- feedback must sound like a real interviewer, first-person ('Exactly!', 'Not quite —').\n"
+        "- score_delta: +20 for correct, -8 for incorrect. Do not deviate.\n"
+        f"Problem: {title}\n"
+        f"Pattern: {pattern}\n"
+        f"Follow-up Question: {followup_question}\n"
+        f"Correct Concept: {correct_chip}\n"
+        f"Candidate Selected: {selected_chip}\n"
+        f"Result: {result_text}\n"
+    )
+    try:
+        raw = llm.invoke(prompt).content.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        parsed = json.loads(raw)
+        feedback = str(parsed.get("feedback", "")).strip()
+        delta = int(parsed.get("score_delta", default_delta))
+        if not feedback:
+            raise ValueError("empty")
+        return feedback, delta
+    except Exception:
+        if is_correct:
+            return (
+                f"Exactly! '{correct_chip}' is the key insight for this follow-up — "
+                f"that's the kind of thinking interviewers love to see.",
+                default_delta,
+            )
+        return (
+            f"Not quite — '{selected_chip}' doesn't directly address the constraint in the follow-up; "
+            f"think about what changes when the problem scales.",
+            default_delta,
+        )
+
+
 def analyze_and_update_progress(
     user_id: str,
     problem_id: str,
@@ -152,6 +220,9 @@ def analyze_and_update_progress(
     mode: str = "Pattern",
     selected_time: str = "",
     selected_space: str = "",
+    followup_question: str = "",
+    correct_chip: str = "",
+    selected_chip: str = "",
 ) -> AnalyzeResult:
     """Update skill/review schedule and return feedback + dynamic score delta."""
     conn = sqlite3.connect(DB_PATH)
@@ -200,8 +271,15 @@ def analyze_and_update_progress(
         expected_space=expected_space,
         selected_time=selected_time,
         selected_space=selected_space,
+        followup_question=followup_question,
+        correct_chip=correct_chip,
+        selected_chip=selected_chip,
     )
-    delta = _clamp_delta_by_difficulty(difficulty, is_correct, raw_delta)
+    if mode == "Follow-up":
+        # Follow-up scoring is fixed (+20 / -8); skip difficulty clamping.
+        delta = raw_delta
+    else:
+        delta = _clamp_delta_by_difficulty(difficulty, is_correct, raw_delta)
     if mode == "Big-O Drill" and is_correct:
         # Weight Big-O correctness higher than normal drill.
         delta = min(25, max(delta, int(round(delta * 1.5))))
