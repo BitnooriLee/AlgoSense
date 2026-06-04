@@ -13,3 +13,7 @@ wheels/
 #github data
 leetcode/
 
+# Interview prep (personal, not for public repo)
+interview_prep.md
+interview_prep/
+

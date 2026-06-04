@@ -37,7 +37,7 @@ Instead of mindlessly grinding problems, AlgoSense:
 └───────────────────────────┬─────────────────────────────────────┘
                             │
             ┌───────────────▼───────────────┐
-            │       LangGraph Workflow       │
+            │       LangGraph Workflow      │
             │                               │
             │  [selection]                  │  selector_agent → 4-bucket scheduler
             │      │                        │
@@ -55,10 +55,10 @@ Instead of mindlessly grinding problems, AlgoSense:
             └───┴─────────────────┴─────────┘
                           │
               ┌───────────▼────────────┐
-              │     SQLite Database     │
-              │  500 problems           │
-              │  user_stats (scores)    │
-              │  review_logs (SM-2)     │
+              │     SQLite Database    │
+              │  500 problems          │
+              │  user_stats (scores)   │
+              │  review_logs (SM-2)    │
               └────────────────────────┘
 ```
 
