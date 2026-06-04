@@ -1,190 +1,156 @@
 # AlgoSense AI
 
-LangGraph-based LeetCode interview preparation coach.  
-Pattern recognition · Big-O analysis · Interview follow-up simulation — optimized for one-handed mobile review.
+> **An adaptive LeetCode interview coach powered by LangGraph, GPT-4o, and spaced repetition.**  
+> Built for engineers who want to stay sharp — one-handed, mobile-first, 10 cards a day.
+
+<br/>
+
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-1.1+-1C3C3C?style=flat-square)
+![LangChain](https://img.shields.io/badge/LangChain-0.3+-1C3C3C?style=flat-square&logo=chainlink&logoColor=white)
+![OpenAI](https://img.shields.io/badge/GPT--4o-OpenAI-412991?style=flat-square&logo=openai&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.44+-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-500%20Problems-003B57?style=flat-square&logo=sqlite&logoColor=white)
 
 ---
 
-## 1) Agent Concept
+## What Is This?
 
-| Item | Description |
-|---|---|
-| Name | AlgoSense AI |
-| Role | Adaptive LeetCode interview coach |
-| Input | `AgentState` + selected mode (`Pattern`, `Big-O Drill`, `Follow-up`) + user response |
-| Output | Curated problem card, static answer validation, GPT-4o feedback, optional follow-up question + keyword chips |
-| LLM | OpenAI GPT-4o (feedback, follow-up generation, Big-O explanation, complexity caching) |
-| DB | SQLite — 500 problems, user skill scores, spaced repetition logs |
+AlgoSense is a **multi-agent interview prep system** that adapts to your skill level in real time.
+
+Instead of mindlessly grinding problems, AlgoSense:
+
+- **Knows where you're weak** — tracks per-pattern skill scores across 500 LeetCode problems
+- **Decides what to study** — Orchestrator agent picks the right mode (Pattern / Big-O / Interview) based on your history, with zero LLM cost
+- **Teaches, not just tests** — GPT-4o delivers concise, tough-love feedback after every answer
+- **Remembers your schedule** — SM-2 spaced repetition ensures you review at exactly the right time
+- **Runs in 10 minutes** — 10-card daily sessions, tap-based UI, no typing required
 
 ---
 
-## 2) Interaction Flow (Streamlit App)
+## System Architecture
 
-```text
-[Session Start]
-      |
-      v
-[Scheduler] ──── mode=Follow-up ──▶ [Pass-first bucket]
-      |                                      |
-      | (Pattern / Big-O)                    |
-      v                                      v
-[Problem Card Display]            [Passed-problem Card Display]
-      |                                      |
-      v                                      v
-[Pattern: MCQ 4-choice]      [Follow-up: AI question + 4 keyword chips]
-[Big-O Drill: Time/Space select]            |
-      |                                      |
-      +──────────────────────────────────────+
-                          |
-                          v
-              [Validator — zero-LLM grading]
-                          |
-                          v
-              [Analyzer Agent (GPT-4o)]
-              · Adaptive score delta (difficulty × mode)
-              · 1-sentence tough-love feedback
-              · SM-2 schedule update
-                          |
-                          v
-              [Show Answer / Next Card]
-                          |
-                          v
-              [Session Summary Dashboard]
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Streamlit UI (main.py)                  │
+│   User ID → Mode → 10-Card Session → Answer → Feedback → Score  │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+            ┌───────────────▼───────────────┐
+            │       LangGraph Workflow       │
+            │                               │
+            │  [selection]                  │  selector_agent → 4-bucket scheduler
+            │      │                        │
+            │  [orchestrator]               │  decide_mode() — pure DB, no LLM
+            │      │                        │  skill < 55  → Pattern
+            │      │                        │  skill ≥ 55  → Big-O Drill
+            │      │                        │  skill ≥ 70 + passed → Follow-up
+            │      │                        │
+            │  [validation]                 │  zero-LLM instant grading
+            │      │                        │
+            │   ┌──┴──────────────┐         │
+            │   │                 │         │
+            │ [followup]      [analysis]    │  GPT-4o agents (parallel prefetch)
+            │   │                 │         │
+            └───┴─────────────────┴─────────┘
+                          │
+              ┌───────────▼────────────┐
+              │     SQLite Database     │
+              │  500 problems           │
+              │  user_stats (scores)    │
+              │  review_logs (SM-2)     │
+              └────────────────────────┘
 ```
 
 ---
 
-## 3) LangGraph Workflow (graph.py)
+## Three Study Modes
 
-```text
-[START]
-   |
-   v
-[selection]   ── selector_agent → scheduler (4-bucket priority)
-   |
-   v
-[orchestrator] ── decide_mode() → reads user_stats + review_logs (no LLM)
-                  · auto_mode=True  → writes mode to state
-                  · auto_mode=False → passes through (manual mode respected)
-   |
-   v
-[validation]  ── validator.py (zero-LLM, instant grading)
-   |
-   +─────────────────────────────+
-   | mode==Follow-up             |
-   | AND is_correct==True        |
-   v                             v
-[followup]                  [analysis]
-(interview_agent GPT-4o)    (analyzer_agent GPT-4o)
-   |                             |
-   +──────────────+──────────────+
-                  |
-                  v
-               [END]
+### Pattern Recognition
+The foundation. Given a problem description, choose the correct algorithmic approach from 4 options.
+
+- Instant grading via `validator.py` — no LLM latency
+- GPT-4o delivers one-sentence feedback after submission
+- Score delta scaled by difficulty: Easy (+4~+8) → Hard (+12~+20)
+
+### Big-O Drill
+Code snippet is shown. You select Time and Space complexity from dropdowns.
+
+- String-normalized matching (e.g., `O(n log n)` vs `O(N log N)`)
+- Correct answers earn a **1.5× score multiplier**
+- "Show Answer" triggers a GPT-4o complexity explanation — generated once, cached forever in DB
+
+### Follow-up Interview Simulation
+For problems you've already passed. GPT-4o acts as a FAANG-style interviewer.
+
+- Generates a follow-up question + 4 keyword chips (1 correct, 3 plausible distractors)
+- User taps a chip — no typing, optimized for one-handed mobile review
+- Score delta: fixed ±20 / -8 (advanced concept, bypasses difficulty clamping)
+- Prefetched via `ThreadPoolExecutor` the moment a card loads — zero wait time
+
+---
+
+## Scheduler: Four-Bucket Priority
+
+Rather than random or sequential ordering, the scheduler ensures the highest-impact cards surface first:
+
+| Priority | Condition | Reason |
+|----------|-----------|--------|
+| 1st | `last_result = 'fail'`, most recent | Fix failures before they compound |
+| 2nd | Not reviewed in 7+ days | SM-2 due date enforcement |
+| 3rd | Lowest 3 `skill_score` patterns | Target your weakest areas |
+| 4th | Blind 75 / NeetCode 150 list | Curated fallback for new users |
+
+Follow-up mode uses a separate path: problems with `last_result = 'pass'`, most recently reviewed first.
+
+---
+
+## Agent Design
+
+| Agent | Role | LLM? |
+|-------|------|-------|
+| `orchestrator_agent` | Reads `user_stats` + `review_logs`, decides study mode | No |
+| `selector_agent` | Wraps scheduler for LangGraph node compatibility | No |
+| `analyzer_agent` | Feedback, score delta, SM-2 update, Big-O explanation cache | GPT-4o |
+| `interview_agent` | Generates follow-up question + 4 chips as structured JSON | GPT-4o |
+| `validator` | MCQ index / keyword matching grader | No |
+
+**Design principle:** Only call the LLM when human-quality language is actually needed. Orchestration, scheduling, and grading all run locally at zero cost.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Language | Python 3.13+ |
+| Agent Orchestration | LangGraph `StateGraph` |
+| LLM | LangChain + LangChain-OpenAI → GPT-4o |
+| UI | Streamlit (mobile-first, one-handed layout) |
+| Database | SQLite — 500 problems, user stats, review logs |
+| Scheduling Algorithm | SM-2 (SuperMemo 2) spaced repetition |
+| Concurrency | `concurrent.futures.ThreadPoolExecutor` (follow-up prefetch) |
+| Packaging | `pyproject.toml` + `uv` |
+
+---
+
+## Project Structure
+
 ```
-
----
-
-## 4) Runtime Entry
-
-| Entry | Purpose |
-|---|---|
-| `streamlit run main.py` | Daily Review Mode — full Streamlit app (primary) |
-| `from graph import app; app.invoke(state)` | LangGraph workflow prototype |
-
----
-
-## 5) Mode Details
-
-### Pattern Mode
-- Presents a problem description with MCQ 4-choice answers.
-- Validates instantly via `tools/validator.py` (no LLM).
-- GPT-4o generates 1-sentence feedback after submission.
-- Score delta: difficulty-adjusted (+4 ~ +20 correct / -18 ~ -4 wrong).
-
-### Big-O Drill Mode
-- Displays a code snippet; user selects Time and Space complexity from dropdowns.
-- Correct answers receive a 1.5× score multiplier.
-- "Show Answer" triggers a cached GPT-4o explanation stored in `problems.complexity_explanation`.
-- Explanation is generated once and persisted — no repeated LLM calls.
-
-### Follow-up Mode (Interview Simulation)
-- Scheduler prioritizes problems the user has already passed (`last_result = 'pass'`).
-- GPT-4o generates one follow-up question and exactly 4 keyword chips per card.
-- One chip is the correct key concept; three are plausible distractors.
-- User taps a chip (no typing) — result is graded and feedback is delivered immediately.
-- Score delta: fixed +20 correct / -8 wrong (advanced concept reward, no difficulty clamping).
-- Interviewer-tone feedback: "Exactly! …" or "Not quite — …"
-
----
-
-## 6) Implementation Notes
-
-### Scheduler (`tools/scheduler.py`)
-Four-bucket priority for Pattern / Big-O modes:
-1. **Failures** — `last_result = 'fail'`, most recent first
-2. **Stale** — not reviewed in 7+ days
-3. **Weak patterns** — lowest 3 `skill_score` tags, unsolved cards only
-4. **Fallback** — Blind 75 / NeetCode 150 priority list, unsolved first
-
-Follow-up mode uses a separate path: `last_result = 'pass'` → most recently reviewed first.
-
-### Analyzer (`agents/analyzer_agent.py`)
-- `analyze_and_update_progress()` handles all 3 modes.
-- `_clamp_delta_by_difficulty()` bounds score changes per difficulty tier.
-- Follow-up mode bypasses difficulty clamping (fixed ±delta from LLM).
-- SM-2 algorithm updates `interval_days` and `ease_factor` in `review_logs`.
-
-### Big-O Cache (`agents/analyzer_agent.py → get_or_create_complexity_explanation`)
-- Checks `problems.complexity_explanation` before calling LLM.
-- Generates a one-sentence Korean explanation and persists it on first access.
-
-### Orchestrator (`agents/orchestrator_agent.py`)
-- `decide_mode(user_id, problem)` — pure DB logic, zero LLM cost.
-- Decision tree: `skill_score < 55` → Pattern · `≥ 55` → Big-O Drill · `≥ 70 + last=pass` → Follow-up.
-- Returns `OrchestratorResult` with `mode`, `skill_score`, `last_result`, `reason`.
-- In `graph.py`: only fires when `auto_mode=True`; manual mode selections are respected.
-- In `main.py`: result cached per card in `session_state`; reason displayed as badge caption.
-- Enables parallel pre-fetch: `ThreadPoolExecutor` starts Follow-up generation the moment a card loads.
-
-### Interview Agent (`agents/interview_agent.py`)
-- `generate_followup_scenario()` calls GPT-4o with problem title, pattern, content, and snippet.
-- Returns `{question, chips[4], correct_chip_index}`.
-- Falls back to template on any parse/API error.
-
-### Complexity Backfill (`tools/complexity_backfill.py`)
-- Standalone script to infer and write `time_complexity` / `space_complexity` from `Solution.py`.
-- Priority: regex extraction from `README_EN.md` → code analysis fallback.
-
-### DB Schema (`tools/db_manager.py`)
-```sql
-problems      (id, title, pattern, difficulty, content, examples, constraints,
-               mcq_options, correct_idx, snippet, followup_keywords,
-               time_complexity, space_complexity, complexity_explanation)
-user_stats    (user_id, tag, skill_score)
-review_logs   (user_id, problem_id, last_reviewed, next_review_date,
-               interval_days, ease_factor, last_result)
-```
-
----
-
-## 7) Project Structure
-
-```text
-.
+AlgoSense/
 ├── main.py                        # Streamlit Daily Review app (primary entry)
 ├── state.py                       # LangGraph AgentState TypedDict
-├── graph.py                       # LangGraph workflow (selection→validation→analysis/followup)
+├── graph.py                       # LangGraph pipeline: selection → validation → analysis/followup
 ├── agents/
-│   ├── orchestrator_agent.py      # Auto mode-decision (skill_score + review_logs, no LLM)
+│   ├── orchestrator_agent.py      # Auto mode-selection (DB only, no LLM)
 │   ├── selector_agent.py          # Scheduler wrapper for graph node
-│   ├── analyzer_agent.py          # GPT-4o coach: feedback, score delta, SM-2 update
-│   ├── interview_agent.py         # GPT-4o follow-up: question + 4 keyword chips
-│   └── classification_agent.py    # Initial routing stub
+│   ├── analyzer_agent.py          # GPT-4o: feedback + score delta + SM-2 + Big-O cache
+│   ├── interview_agent.py         # GPT-4o: follow-up question + 4 keyword chips
+│   └── classification_agent.py   # Routing stub (extensible)
 ├── tools/
 │   ├── db_manager.py              # SQLite schema init + bulk insert helpers
-│   ├── scheduler.py               # 4-bucket card selector + SM-2 schedule update
-│   ├── validator.py               # Zero-LLM MCQ / keyword grader
+│   ├── scheduler.py               # 4-bucket card selector + SM-2 schedule updater
+│   ├── validator.py               # Zero-LLM MCQ and keyword grader
 │   ├── data_loader.py             # LeetCode ETL pipeline (parse → metadata → DB)
 │   └── complexity_backfill.py     # Batch Big-O inference from README / Solution.py
 └── data/
@@ -193,20 +159,73 @@ review_logs   (user_id, problem_id, last_reviewed, next_review_date,
 
 ---
 
-## 8) Setup
+## Database Schema
+
+```sql
+problems    (id, title, pattern, difficulty, content, examples, constraints,
+             mcq_options, correct_idx, snippet, followup_keywords,
+             time_complexity, space_complexity, complexity_explanation)
+
+user_stats  (user_id, tag, skill_score)
+
+review_logs (user_id, problem_id, last_reviewed, next_review_date,
+             interval_days, ease_factor, last_result)
+```
+
+The `complexity_explanation` column acts as a **persistent LLM cache** — generated once on first "Show Answer" and never re-fetched.
+
+---
+
+## Setup
 
 ```bash
-# Install dependencies
+# 1. Install dependencies
 pip install -e .
 
-# Set OpenAI key
+# 2. Add your OpenAI API key
 echo "OPENAI_API_KEY=sk-..." > .env
 
-# (First time) Initialise DB and populate 500 problems
+# 3. Initialize the database (first time only)
 python3 tools/db_manager.py
 
-# Run app
+# 4. Launch the app
 streamlit run main.py
 ```
 
-> The app validates the API key and DB on startup and shows clear error messages if either is missing.
+The app validates the API key and DB connection on startup and surfaces clear error messages if either is missing.
+
+---
+
+## Key Design Decisions
+
+**Why LangGraph?**  
+The study flow is fundamentally a stateful, conditional pipeline — not a chat loop. LangGraph's `StateGraph` makes the branching logic (`followup` vs. `analysis`) explicit and inspectable, rather than buried in `if/else` chains.
+
+**Why SQLite instead of a vector store?**  
+The knowledge base is structured and finite (500 problems). Pattern-matching and skill scoring are relational operations. SQLite gives sub-millisecond query latency with zero infrastructure.
+
+**Why zero-LLM grading?**  
+MCQ index comparison and string-normalized Big-O matching are deterministic and instant. Calling GPT-4o to grade a multiple-choice answer would add 1–2 seconds of latency per card with no accuracy benefit. LLM calls are reserved exclusively for generative tasks.
+
+**Why SM-2?**  
+The SM-2 algorithm is well-proven, simple to implement, and maps cleanly onto a SQL schema (`interval_days`, `ease_factor`). It ensures problems resurface at the moment forgetting is most likely — maximizing retention per review minute.
+
+---
+
+## AgentState
+
+```python
+class AgentState(TypedDict):
+    mode: str                    # 'Pattern' | 'Big-O Drill' | 'Follow-up'
+    user_id: str
+    current_problem: dict
+    user_response: str
+    is_correct: bool
+    feedback: str
+    auto_mode: bool              # True → orchestrator decides mode
+    steps_completed: Annotated[int, operator.add]
+```
+
+---
+
+*Built as part of an AI Agents course assignment. Designed to be a real tool, not just a demo.*
